@@ -9,12 +9,10 @@ using UnityEngine.UI;
 
 public class MainMenuUIManager : MonoBehaviour
 {
-    public static MainMenuUIManager instance;
-
     public GameObject MainMenu;
     public GameObject SingleplayerMenu;
     public GameObject MultiplayerMenu;
-    public GameObject NewGameMenu;
+    public GameObject NewSingleplayerWorldMenu;
 
     [Header("Singleplayer Variables")]
     public List<WorldData> saves;
@@ -24,37 +22,32 @@ public class MainMenuUIManager : MonoBehaviour
     public GameObject worldSaveObject;
     public GameObject singleplayerContentObject;
 
-    public TMP_InputField newGameName;
+    public TMP_InputField newSingleplayerWorldNameField;
 
-    private void Awake()
+    //open delete buttons
+    public Button openWorldButton;
+    public TMP_Text openWorldText; 
+    public Button deleteWorldButton;
+    public TMP_Text deleteWorldText;
+
+    public WorldData selectedWorld;
+
+    private void OnEnable()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            instance = this;
-        }
+        GameManager.OnNewSingleplayerWorld += CreateNewWorld;
+        GameManager.OnSelectedWorld += WorldSelected;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnNewSingleplayerWorld -= CreateNewWorld;
+        GameManager.OnSelectedWorld -= WorldSelected;
     }
 
     private void Start()
     {
         CloseAll();
-        MainMenuButton();
-    }
-
-    public void getWorldSaves()
-    {
-        saves = FileManager.getSaves();
-        foreach (WorldData data in saves)
-        {
-            GameObject obj = Instantiate(worldSaveObject, singleplayerContentObject.transform);
-            obj.GetComponent<WorldSaveScript>().worldData = data;
-            obj.GetComponent<WorldSaveScript>().worldTitle.text = data.name;
-            obj.GetComponent<WorldSaveScript>().lastPlayed.text = "Last Played: " + data.lastPlayed; 
-            saveObjects.Add(obj);
-        }
+        OpenMainMenu();
     }
 
     void CloseAll()
@@ -62,130 +55,81 @@ public class MainMenuUIManager : MonoBehaviour
         MainMenu.SetActive(false);
         SingleplayerMenu.SetActive(false);
         //MultiplayerMenu.SetActive(false);
-        NewGameMenu.SetActive(false);
+        NewSingleplayerWorldMenu.SetActive(false);
+        selectedWorld = null;
         foreach (GameObject obj in saveObjects)
         {
             Destroy(obj);
         }
+        saveObjects = new List<GameObject>();
     }
 
-    public void SingleplayerButton()
+    public void OpenSingleplayerMenu()
     {
         CloseAll();
         SingleplayerMenu.SetActive(true);
-        getWorldSaves();
+        InstantiateWorldSaveObjects();
     }
-
-    public void MainMenuButton()
+    public void OpenMainMenu()
     {
         CloseAll();
         MainMenu.SetActive(true);
     }
 
-    public void NewGameButton()
+    public void OpenNewWorldMenu()
     {
         CloseAll();
-        NewGameMenu.SetActive(true);
+        NewSingleplayerWorldMenu.SetActive(true);
     }
 
-    public void CreateNewGame()
+    public void CreateNewWorld()
     {
-        if (checkIfValid(newGameName.text))
+        if (FileManager.checkIfValidWorldName(newSingleplayerWorldNameField.text))
         {
-            FileManager.newGame(newGameName.text, getLastPlayed(DateTime.Now));
-            MainMenuButton();
+            FileManager.newGame(newSingleplayerWorldNameField.text, FileManager.getLastPlayed(DateTime.Now));
+            OpenMainMenu();
         }
     }
 
-    bool checkIfValid(string name)
+    void WorldSelected(WorldData data)
     {
-        if (name == "")
+        selectedWorld = data;
+
+        foreach (GameObject obj in saveObjects)
         {
-            return false;
+            if (!obj.GetComponent<WorldSaveScript>().worldData.name.Equals(data.name))
+            {
+                obj.GetComponent<WorldSaveScript>().selectedImage.SetActive(false);
+            }
         }
-        List<WorldData> worlds = FileManager.getSaves();
-        foreach (WorldData data in worlds)
-        {
-            if (data.name.Equals(name))
-                return false;
-        }
-        return true;
+
+        openWorldButton.interactable = true;
+        openWorldText.alpha = 255f;
+        deleteWorldButton.interactable = true;
+        deleteWorldText.alpha = 255f;
     }
 
-    string getLastPlayed(DateTime dt)
+    void WorldDeselect()
     {
-        string month;
-        switch (dt.Month)
-        {
-            case 1:
-                month = "January";
-                break;
-            case 2:
-                month = "February";
-                break;
-            case 3:
-                month = "March";
-                break;
-            case 4:
-                month = "April";
-                break;
-            case 5:
-                month = "May";
-                break;
-            case 6:
-                month = "June";
-                break;
-            case 7:
-                month = "July";
-                break;
-            case 8:
-                month = "August";
-                break;
-            case 9:
-                month = "September";
-                break;
-            case 10:
-                month = "October";
-                break;
-            case 11:
-                month = "November";
-                break;
-            case 12:
-                month = "December";
-                break;
-            default:
-                month = "January";
-                break;
-        }
+        selectedWorld = null;
 
-        string day;
-        switch (dt.Day)
-        {
-            case 1:
-                day = "1st";
-                break;
-            case 2:
-                day = "2nd";
-                break;
-            default:
-                day = dt.Day.ToString() + "th";
-                break;
-        }
+        openWorldButton.interactable = false;
+        openWorldText.alpha = 87f;
+        deleteWorldButton.interactable = false;
+        deleteWorldText.alpha = 87f;
+    }
 
-        int hour;
-        string ampm;
-
-        if (dt.Hour > 12) 
+    public void InstantiateWorldSaveObjects()
+    {
+        WorldDeselect();
+        saves = FileManager.getSaves();
+        foreach (WorldData data in saves)
         {
-            hour = dt.Hour - 12;
-            ampm = "PM";
+            GameObject obj = Instantiate(worldSaveObject, singleplayerContentObject.transform);
+            obj.GetComponent<WorldSaveScript>().worldData = data;
+            obj.GetComponent<WorldSaveScript>().worldTitle.text = data.name;
+            obj.GetComponent<WorldSaveScript>().lastPlayed.text = "Last Played: " + data.lastPlayed;
+            saveObjects.Add(obj);
         }
-        else
-        {
-            hour = dt.Hour;
-            ampm = "AM";
-        }
-
-        return month + " " + day + ", " + hour + ":" + dt.Minute + " " + ampm;
     }
 }

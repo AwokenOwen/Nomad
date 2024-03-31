@@ -16,6 +16,17 @@ public class GameManager : MonoBehaviour
 
     public WorldData currentWorldData;
 
+    #region Events
+    public delegate void NewSingleplayerWorldAction();
+    public static event NewSingleplayerWorldAction OnNewSingleplayerWorld;
+
+    public delegate void OpenSingleplayerWorldAction();
+    public static event OpenSingleplayerWorldAction OnOpenSingleplayerWorld;
+
+    public delegate void SelectedWorldAction(WorldData data);
+    public static event SelectedWorldAction OnSelectedWorld;
+    #endregion
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -50,17 +61,22 @@ public class GameManager : MonoBehaviour
     #region MainMenu
     private void MainMenuUpdate()
     {
-
+        //Main Menu Update
     }
 
     public void CreateNewSingleplayerWorld()
     {
-
+        OnNewSingleplayerWorld();
     }
 
     public void OpenSingleplayerWorld()
     {
+        OnOpenSingleplayerWorld();
+    }
 
+    public void SelectedWorld(WorldData data)
+    {
+        OnSelectedWorld(data);
     }
 
     #endregion
