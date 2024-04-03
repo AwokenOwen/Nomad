@@ -8,9 +8,9 @@ public static class FileManager
 {
     static string path = Application.persistentDataPath;
 
-    public static List<WorldData> getSaves()
+    public static List<SaveMetaData> getSaves()
     {
-        List<WorldData> saves = new List<WorldData>();
+        List<SaveMetaData> saves = new List<SaveMetaData>();
 
         if (!Directory.Exists(path + "/saves"))
         {
@@ -18,24 +18,37 @@ public static class FileManager
         }
 
         DirectoryInfo d = new DirectoryInfo(path + "/saves");
-        foreach (var file in d.GetFiles("*.sav"))
+        foreach (var file in d.GetFiles("*.msav"))
         {
-            WorldData data = JsonUtility.FromJson<WorldData>(File.ReadAllText(path + "/saves/" + file.Name));
-            saves.Add(data);
+            string data = File.ReadAllText(file.FullName);
+
+            SaveMetaData meta = JsonUtility.FromJson<SaveMetaData>(data);
+            saves.Add(meta);
         }
 
         return saves;
     }
 
-    public static WorldData newGame(string name, string lastPlayed)
+    public static WorldData loadWorld(string name)
     {
-        WorldData game = new WorldData(name, lastPlayed);
+        string data = File.ReadAllText (path + "/saves/" + name + ".sav");
 
-        string data = JsonUtility.ToJson(game);
+        WorldData world = JsonUtility.FromJson<WorldData>(data);
+        UpdateMetaData(name);
+        return world;
+    }
 
-        File.WriteAllText(path + "/saves/" + name + ".sav", data);
+    public static void saveWorld(WorldData world)
+    {
+        world.saveWorld();
 
-        return game;
+        string data = JsonUtility.ToJson(world);
+
+        string metaData = JsonUtility.ToJson(new SaveMetaData(world.name, getLastPlayed(DateTime.Now)));
+
+        File.WriteAllText(path + "/saves/" + world.name + ".sav", data);
+
+        File.WriteAllText(path + "/saves/" + world.name + ".msav", metaData);
     }
 
     public static bool checkIfValidWorldName(string name)
@@ -44,10 +57,10 @@ public static class FileManager
         {
             return false;
         }
-        List<WorldData> worlds = getSaves();
-        foreach (WorldData data in worlds)
+        List<SaveMetaData> worlds = getSaves();
+        foreach (SaveMetaData metaData in worlds)
         {
-            if (data.name.Equals(name))
+            if (metaData.name.Equals(name))
                 return false;
         }
         return true;
@@ -127,13 +140,24 @@ public static class FileManager
             ampm = "AM";
         }
 
-        return month + " " + day + ", " + hour + ":" + dt.Minute + " " + ampm;
+        string minute = dt.Minute.ToString("00");
+
+        return month + " " + day + ", " + hour + ":" + minute + " " + ampm;
     }
 
     public static void DeleteSave(string name)
     {
         string savePath = path + "/saves/" + name + ".sav";
+        string saveMetaPath = path + "/saves/" + name + ".msav";
 
         File.Delete(savePath);
+        File.Delete(saveMetaPath);
+    }
+    
+    static void UpdateMetaData(string name)
+    {
+        string metaData = JsonUtility.ToJson(new SaveMetaData(name, getLastPlayed(DateTime.Now)));
+
+        File.WriteAllText(path + "/saves/" + name + ".msav", metaData);
     }
 }

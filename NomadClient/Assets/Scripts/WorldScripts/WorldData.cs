@@ -7,12 +7,29 @@ using UnityEngine;
 public class WorldData
 {
     public string name;
-    
-    public string lastPlayed;
 
-    public WorldData(string name, string lastPlayed)
+    [SerializeField]
+    PlayerData playerData;
+
+    [SerializeField]
+    Vector3 spawnPoint;
+
+    public WorldData(string name)
     {
         this.name = name;
-        this.lastPlayed = lastPlayed;
+        //imput world spawn point here
+        spawnPoint = Vector3.zero;
+        this.playerData = new PlayerData(spawnPoint);
+    }
+
+    public void saveWorld()
+    {
+        playerData.PlayerInventory.SaveItems();
+    }
+
+    public void loadWorld(out PlayerData player)
+    {
+        player = playerData;
+        playerData.PlayerInventory.LoadItems();
     }
 }

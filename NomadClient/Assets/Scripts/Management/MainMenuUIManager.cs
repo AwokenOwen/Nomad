@@ -14,34 +14,26 @@ public class MainMenuUIManager : MonoBehaviour
     public GameObject MultiplayerMenu;
     public GameObject NewSingleplayerWorldMenu;
 
+    #region Singleplayer Variables
     [Header("Singleplayer Variables")]
-    public List<WorldData> saves;
+    public List<GameObject> worldSaveObjects;
 
-    public List<GameObject> saveObjects;
-
-    public GameObject worldSaveObject;
+    public GameObject worldSavePrefab;
     public GameObject singleplayerContentObject;
 
     public TMP_InputField newSingleplayerWorldNameField;
 
-    //open delete buttons
     public Button openWorldButton;
     public TMP_Text openWorldText; 
     public Button deleteWorldButton;
     public TMP_Text deleteWorldText;
 
-    public WorldData selectedWorld;
+    string selectedWorld;
+    #endregion
 
     private void OnEnable()
     {
-        GameManager.OnNewSingleplayerWorld += CreateNewWorld;
-        GameManager.OnSelectedWorld += WorldSelected;
-    }
-
-    private void OnDisable()
-    {
-        GameManager.OnNewSingleplayerWorld -= CreateNewWorld;
-        GameManager.OnSelectedWorld -= WorldSelected;
+        WorldSaveScript.OnSelect += WorldSelected;
     }
 
     private void Start()
@@ -50,18 +42,25 @@ public class MainMenuUIManager : MonoBehaviour
         OpenMainMenu();
     }
 
+    #region Menu Transition
+
     void CloseAll()
     {
         MainMenu.SetActive(false);
         SingleplayerMenu.SetActive(false);
-        //MultiplayerMenu.SetActive(false);
+        MultiplayerMenu.SetActive(false);
         NewSingleplayerWorldMenu.SetActive(false);
-        selectedWorld = null;
-        foreach (GameObject obj in saveObjects)
+        foreach (GameObject obj in worldSaveObjects)
         {
             Destroy(obj);
         }
-        saveObjects = new List<GameObject>();
+        worldSaveObjects = new List<GameObject>();
+    }
+
+    public void OpenMultiplayerMenu()
+    {
+        CloseAll();
+        MultiplayerMenu.SetActive(true);
     }
 
     public void OpenSingleplayerMenu()
@@ -82,31 +81,39 @@ public class MainMenuUIManager : MonoBehaviour
         NewSingleplayerWorldMenu.SetActive(true);
     }
 
+    #endregion
+
     public void CreateNewWorld()
     {
         if (FileManager.checkIfValidWorldName(newSingleplayerWorldNameField.text))
         {
-            FileManager.newGame(newSingleplayerWorldNameField.text, FileManager.getLastPlayed(DateTime.Now));
-            OpenMainMenu();
+            CloseAll();
+            GameManager.instance.CreateNewSingleplayerWorld(newSingleplayerWorldNameField.text);
         }
     }
 
-    void WorldSelected(WorldData data)
+    public void OpenWorld()
     {
-        selectedWorld = data;
+        CloseAll();
+        GameManager.instance.OpenSingleplayerWorld(selectedWorld);
+    }
 
-        foreach (GameObject obj in saveObjects)
+    void WorldSelected(string name)
+    {
+        selectedWorld = name;
+
+        foreach (GameObject obj in worldSaveObjects)
         {
-            if (!obj.GetComponent<WorldSaveScript>().worldData.name.Equals(data.name))
+            if (!obj.GetComponent<WorldSaveScript>().worldTitle.text.Equals(name))
             {
                 obj.GetComponent<WorldSaveScript>().selectedImage.SetActive(false);
             }
         }
 
         openWorldButton.interactable = true;
-        openWorldText.alpha = 255f;
+        openWorldText.alpha = 1f;
         deleteWorldButton.interactable = true;
-        deleteWorldText.alpha = 255f;
+        deleteWorldText.alpha = 1f;
     }
 
     void WorldDeselect()
@@ -114,22 +121,40 @@ public class MainMenuUIManager : MonoBehaviour
         selectedWorld = null;
 
         openWorldButton.interactable = false;
-        openWorldText.alpha = 87f;
+        openWorldText.alpha = 87f/255f;
         deleteWorldButton.interactable = false;
-        deleteWorldText.alpha = 87f;
+        deleteWorldText.alpha = 87f/255f;
     }
 
     public void InstantiateWorldSaveObjects()
     {
         WorldDeselect();
-        saves = FileManager.getSaves();
-        foreach (WorldData data in saves)
+        List<SaveMetaData> saves = FileManager.getSaves();
+
+        foreach (SaveMetaData save in saves)
         {
-            GameObject obj = Instantiate(worldSaveObject, singleplayerContentObject.transform);
-            obj.GetComponent<WorldSaveScript>().worldData = data;
-            obj.GetComponent<WorldSaveScript>().worldTitle.text = data.name;
-            obj.GetComponent<WorldSaveScript>().lastPlayed.text = "Last Played: " + data.lastPlayed;
-            saveObjects.Add(obj);
+            GameObject obj = Instantiate(worldSavePrefab, singleplayerContentObject.transform);
+            obj.GetComponent<WorldSaveScript>().worldTitle.text = save.name;
+            obj.GetComponent<WorldSaveScript>().lastPlayed.text = save.lastPlayed;
+
+            worldSaveObjects.Add(obj);
         }
+    }
+
+    void RefreshWorlds()
+    {
+        foreach (GameObject obj in worldSaveObjects)
+        {
+            Destroy(obj);
+        }
+        worldSaveObjects = new List<GameObject>();
+
+        InstantiateWorldSaveObjects();
+    }
+
+    public void DeleteWorld()
+    {
+        FileManager.DeleteSave(selectedWorld);
+        RefreshWorlds();
     }
 }

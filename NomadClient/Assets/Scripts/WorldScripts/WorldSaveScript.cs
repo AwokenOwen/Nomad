@@ -8,13 +8,14 @@ public class WorldSaveScript : MonoBehaviour, IPointerClickHandler
 {
     public TMP_Text worldTitle;
     public TMP_Text lastPlayed;
-    public WorldData worldData;
 
     public GameObject selectedImage;
+
+    public static event GameManager.WorldSelectAction OnSelect;
 
     public void OnPointerClick(PointerEventData eventData)
     {
         selectedImage.SetActive(true);
-        GameManager.instance.SelectedWorld(worldData);
+        OnSelect(worldTitle.text);
     }
 }

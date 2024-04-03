@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum GameStates
 {
@@ -16,16 +18,7 @@ public class GameManager : MonoBehaviour
 
     public WorldData currentWorldData;
 
-    #region Events
-    public delegate void NewSingleplayerWorldAction();
-    public static event NewSingleplayerWorldAction OnNewSingleplayerWorld;
-
-    public delegate void OpenSingleplayerWorldAction();
-    public static event OpenSingleplayerWorldAction OnOpenSingleplayerWorld;
-
-    public delegate void SelectedWorldAction(WorldData data);
-    public static event SelectedWorldAction OnSelectedWorld;
-    #endregion
+    public delegate void WorldSelectAction(string name);
 
     private void Awake()
     {
@@ -49,9 +42,9 @@ public class GameManager : MonoBehaviour
         switch (currentGameState)
         {
             case GameStates.MainMenu:
-                MainMenuUpdate();
                 break;
             case GameStates.SingleplayerWorld:
+                SingleplayerUpdate();
                 break;
             case GameStates.MultiplayerWorld:
                 break;
@@ -59,25 +52,28 @@ public class GameManager : MonoBehaviour
     }
 
     #region MainMenu
-    private void MainMenuUpdate()
+    public void CreateNewSingleplayerWorld(string name)
     {
-        //Main Menu Update
+        FileManager.saveWorld(new WorldData(name));
+        OpenSingleplayerWorld(name);
     }
 
-    public void CreateNewSingleplayerWorld()
+    public void OpenSingleplayerWorld(string name)
     {
-        OnNewSingleplayerWorld();
+        currentWorldData = FileManager.loadWorld(name);
+        //switch to singleplayer mode
+        currentGameState = GameStates.SingleplayerWorld;
+        //load singleplayer scene
+        SceneManager.LoadScene("MainMenu");
+    }
+    #endregion
+
+    #region Singleplayer
+    private void SingleplayerUpdate()
+    {
+        //single player update
     }
 
-    public void OpenSingleplayerWorld()
-    {
-        OnOpenSingleplayerWorld();
-    }
-
-    public void SelectedWorld(WorldData data)
-    {
-        OnSelectedWorld(data);
-    }
 
     #endregion
 }
