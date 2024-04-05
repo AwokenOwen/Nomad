@@ -4,45 +4,55 @@ using UnityEngine;
 
 public class PlayerMotion : MonoBehaviour
 {
-    RaycastHit hit;
-
-    [Header("Movement Variables")]
-    Vector3 totalAccel;
+    Rigidbody rb;
 
     [SerializeField]
-    float terminalVelocity;
+    float moveSpeed, maxSpeed;
 
     [SerializeField]
-    Vector3 gravityAccel;
+    float groundDrag;
 
     [SerializeField]
-    float gravityAngleOffset;
-
+    float playerHeight;
     [SerializeField]
-    float baseMoveSpeed;
+    LayerMask ground;
+    [SerializeField]
+    bool grounded;
+
+    Vector3 inputForward;
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
+
+    private void Update()
+    {
+        RaycastHit hit;
+        grounded = Physics.SphereCast(transform.position, 0.5f, Vector3.down, out hit, (playerHeight * 0.5f) + 0.2f, ground);
+
+        Vector3 input = PlayerManager.instance.GetMoveInput();
+
+        Vector3 cameraForward = PlayerManager.instance.GetCameraForwardVector();
+
+        inputForward = cameraForward * input.y + Vector3.Cross(cameraForward, Vector3.up) * -input.x;
+
+        Vector3 horizontalVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+        if (horizontalVel.magnitude > maxSpeed)
+        {
+            horizontalVel = horizontalVel.normalized * maxSpeed;
+            rb.velocity = new Vector3(horizontalVel.x, rb.velocity.y, horizontalVel.z);
+        }
+
+        if (grounded)
+            rb.drag = groundDrag;
+        else
+            rb.drag = 0f;
+    }
 
     private void FixedUpdate()
     {
-        if (Physics.SphereCast(transform.position, 0.5f, Vector3.down, out hit, 0.01f))
-        {
-            transform.up = hit.normal;
-        }
-
-        Vector2 inputVec = PlayerManager.instance.GetMoveVec();
-
-        Vector3 inputDirectionalVector = transform.forward * inputVec.y + transform.right * inputVec.x;
-
-        Vector3 gravity = PlayerManager.instance.getGravity();
-
-        Vector3 movement = Vector3.ProjectOnPlane((inputDirectionalVector * baseMoveSpeed) + gravity, hit.normal);
-
-        if (Physics.SphereCast(transform.position, 0.5f, movement.normalized, out hit, movement.magnitude))
-        {
-            Debug.Log("hit");
-            transform.up = hit.normal;
-            movement = Vector3.ProjectOnPlane(movement, hit.normal);
-        }
-
-        transform.position += movement;
+        rb.AddForce(inputForward * moveSpeed * 10f); //add other stat stuff here
     }
 }

@@ -1,15 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager instance;
 
-    [SerializeField]
-    Vector3 gravity;
+    Vector2 moveInput;
+    Vector2 camInput;
 
-    Vector2 moveVec;
+    Vector3 cameraForwardVector;
+
+    [SerializeField]
+    public static Vector3 gravity { get; private set; }
 
     private void Awake()
     {
@@ -25,21 +26,42 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
-        moveVec = new Vector2();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    public void SetMoveVec(Vector2 moveVec)
+    private void FixedUpdate()
     {
-        this.moveVec = moveVec;
+
     }
 
-    public Vector2 GetMoveVec()
+    public void SetMoveInput(Vector2 moveInput)
     {
-        return moveVec;
+        this.moveInput = moveInput;
     }
 
-    public Vector3 getGravity() 
-    { 
-        return gravity; 
+    public Vector2 GetMoveInput()
+    {
+        return moveInput;
+    }
+
+    public void SetCamInput(Vector2 camInput)
+    {
+        this.camInput = camInput;
+    }
+
+    public Vector2 GetCamInput()
+    {
+        return camInput;
+    }
+
+    public void SetCameraForwardVector(Vector3 cameraForwardVector)
+    {
+        this.cameraForwardVector = cameraForwardVector;
+    }
+
+    public Vector3 GetCameraForwardVector()
+    {
+        return cameraForwardVector;
     }
 }
