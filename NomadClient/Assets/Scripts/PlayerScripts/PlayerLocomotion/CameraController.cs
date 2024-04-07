@@ -49,7 +49,7 @@ public class CameraController : MonoBehaviour
 
     void NormalFixedUpdate()
     {
-        Vector2 camInput = PlayerManager.instance.GetCamInput();
+        Vector2 camInput = PlayerManager.instance.camInput;
 
         phi -= camInput.y * .01f;//SETTINGS.SENSITIVITY;
         phi = Mathf.Clamp(phi, 0.2f, Mathf.PI - 0.2f);

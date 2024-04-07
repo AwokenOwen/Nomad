@@ -4,13 +4,34 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager instance;
 
-    Vector2 moveInput;
-    Vector2 camInput;
+    public Vector2 moveInput {  get; private set; }
+    public Vector2 camInput {  get; private set; }
 
-    Vector3 cameraForwardVector;
+    public Vector3 cameraForwardVector { get; private set; }
+
+    public Rigidbody rb {  get; private set; }
+
+    [field: SerializeField] public float groundDrag { get; private set; }
+
+    [field: SerializeField] public float playerHeight {  get; private set; }
+
+    [field: SerializeField] public LayerMask groundMask {  get; private set; }
+
+    [field: SerializeField] public bool grounded { get; private set; }
+
+    [field: SerializeField] public float airMultiplier {  get; private set; }
+
+    AbilityData abilities;
+    [SerializeField] bool jumping;
+    [SerializeField] bool readyToJump;
 
     [SerializeField]
-    public static Vector3 gravity { get; private set; }
+    float jumpCooldown;
+
+    [SerializeField]
+    Animator bodyAnimator;
+
+    public bool exitingSlope {  get; private set; }
 
     private void Awake()
     {
@@ -28,11 +49,48 @@ public class PlayerManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        transform.position = GameManager.instance.currentWorldData.GetSpawn();
+
+        rb = GetComponent<Rigidbody>();
+
+        abilities = GameManager.instance.currentWorldData.GetAbilities();
+
+        readyToJump = true;
+        exitingSlope = false;
+    }
+
+    private void Update()
+    {
+        RaycastHit hit;
+        grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, (playerHeight * 0.5f), groundMask);
     }
 
     private void FixedUpdate()
     {
+        if (jumping && readyToJump && grounded)
+        {
+            readyToJump = false;
 
+            abilities.JumpData.OnHold();
+
+            Invoke(nameof(ResetJump), jumpCooldown);
+        }
+
+        if (moveInput.magnitude > 0)
+        {
+            bodyAnimator.transform.rotation = Quaternion.Slerp(bodyAnimator.transform.rotation, Quaternion.LookRotation(cameraForwardVector), 0.2f);
+        }
+
+        bodyAnimator.SetFloat("xInput", Mathf.Lerp(bodyAnimator.GetFloat("xInput"), moveInput.x, 0.1f));
+        bodyAnimator.SetFloat("yInput", Mathf.Lerp(bodyAnimator.GetFloat("yInput"), moveInput.y, 0.1f));
+    }
+
+    private void ResetJump()
+    {
+        readyToJump = true;
+
+        exitingSlope = false;
     }
 
     public void SetMoveInput(Vector2 moveInput)
@@ -40,28 +98,65 @@ public class PlayerManager : MonoBehaviour
         this.moveInput = moveInput;
     }
 
-    public Vector2 GetMoveInput()
-    {
-        return moveInput;
-    }
-
     public void SetCamInput(Vector2 camInput)
     {
         this.camInput = camInput;
     }
-
-    public Vector2 GetCamInput()
-    {
-        return camInput;
-    }
-
     public void SetCameraForwardVector(Vector3 cameraForwardVector)
     {
-        this.cameraForwardVector = cameraForwardVector;
+        this.cameraForwardVector = cameraForwardVector.normalized;
     }
 
-    public Vector3 GetCameraForwardVector()
+    public void CallJump(bool performed)
     {
-        return cameraForwardVector;
+        exitingSlope = true;
+        jumping = performed;
+        if (performed)
+        {
+            abilities.JumpData.OnPress();
+        }
+        else
+        {
+            abilities.JumpData.OnRelease();
+        }
+    }
+
+    public Vector3 JumpUpVector()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, playerHeight * 0.5f + 1f))
+        {
+            Vector3 midpoint = (hit.normal + Vector3.up) / 2f;
+
+            return midpoint.normalized;
+        }
+        else
+        {
+            return transform.up;
+        }
+    }
+
+    [SerializeField]
+    float maxSlopeAngle;
+
+    public bool OnSlope(out RaycastHit slopeHit)
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, (playerHeight * 0.5f) + 0.3f, groundMask))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < maxSlopeAngle && angle != 0;
+        }
+        return false;
+    }
+
+    public bool OnSlope()
+    {
+        RaycastHit slopeHit;
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, (playerHeight * 0.5f) + 0.3f, groundMask))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < maxSlopeAngle && angle != 0;
+        }
+        return false;
     }
 }

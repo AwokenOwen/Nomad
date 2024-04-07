@@ -40,11 +40,9 @@ public static class FileManager
 
     public static void saveWorld(WorldData world)
     {
-        world.saveWorld();
+        string data = JsonUtility.ToJson(world, true);
 
-        string data = JsonUtility.ToJson(world);
-
-        string metaData = JsonUtility.ToJson(new SaveMetaData(world.name, getLastPlayed(DateTime.Now)));
+        string metaData = JsonUtility.ToJson(new SaveMetaData(world.name, getLastPlayed(DateTime.Now)), true);
 
         File.WriteAllText(path + "/saves/" + world.name + ".sav", data);
 
@@ -156,7 +154,7 @@ public static class FileManager
     
     static void UpdateMetaData(string name)
     {
-        string metaData = JsonUtility.ToJson(new SaveMetaData(name, getLastPlayed(DateTime.Now)));
+        string metaData = JsonUtility.ToJson(new SaveMetaData(name, getLastPlayed(DateTime.Now)), true);
 
         File.WriteAllText(path + "/saves/" + name + ".msav", metaData);
     }

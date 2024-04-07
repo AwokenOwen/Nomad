@@ -26,9 +26,10 @@ public class WorldData
         this.settingsData = new SettingsData();
     }
 
-    public void saveWorld()
+    public void saveWorld(Vector3 playerPos)
     {
         playerData.PlayerInventory.SaveItems();
+        playerData.Position = playerPos;
     }
 
     public void loadWorld(out PlayerData player)
@@ -40,5 +41,32 @@ public class WorldData
     public float getSens()
     {
         return settingsData.Sensitivity;
+    }
+
+    public void AddItem(ItemData data)
+    {
+        playerData.PlayerInventory.AddItem(data, 1);
+    }
+
+    public float GetMoveSpeed()
+    {
+        //do stat stuff for new MoveSpeed
+        return BASE_STATS.MOVE_SPEED;
+    }
+
+    public float GetJumpForce()
+    {
+        //do stat stuff for new JumpForce
+        return BASE_STATS.JUMP_FORCE;
+    }
+
+    public AbilityData GetAbilities()
+    {
+        return playerData.Abilities;
+    }
+
+    public Vector3 GetSpawn()
+    {
+        return playerData.Position;
     }
 }

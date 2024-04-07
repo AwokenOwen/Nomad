@@ -18,7 +18,10 @@ public class GameManager : MonoBehaviour
 
     public WorldData currentWorldData;
 
+
+    #region MainMenu
     public delegate void WorldSelectAction(string name);
+    #endregion
 
     private void Awake()
     {
@@ -30,11 +33,13 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
+        DontDestroyOnLoad(this.gameObject);
     }
 
     private void Start()
     {
-        currentGameState = GameStates.MainMenu;
+        currentGameState = GameStates.SingleplayerWorld;
+        currentWorldData = new WorldData("Apple");
     }
 
     private void Update()
@@ -54,7 +59,11 @@ public class GameManager : MonoBehaviour
     #region MainMenu
     public void CreateNewSingleplayerWorld(string name)
     {
-        FileManager.saveWorld(new WorldData(name));
+        WorldData data = new WorldData(name);
+
+        data.AddItem(ITEMS.SIMPLE_SWORD);
+
+        FileManager.saveWorld(data);
         OpenSingleplayerWorld(name);
     }
 
@@ -64,16 +73,31 @@ public class GameManager : MonoBehaviour
         //switch to singleplayer mode
         currentGameState = GameStates.SingleplayerWorld;
         //load singleplayer scene
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("SingleplayerWorld");
     }
     #endregion
 
     #region Singleplayer
     private void SingleplayerUpdate()
     {
-        //single player update
+        
     }
 
 
     #endregion
+
+    private void OnApplicationQuit()
+    {
+        switch (currentGameState)
+        {
+            case GameStates.MainMenu:
+                break;
+            case GameStates.SingleplayerWorld:
+                currentWorldData.saveWorld(PlayerManager.instance.transform.position);
+                FileManager.saveWorld(currentWorldData);
+                break;
+            case GameStates.MultiplayerWorld:
+                break;
+        }
+    }
 }

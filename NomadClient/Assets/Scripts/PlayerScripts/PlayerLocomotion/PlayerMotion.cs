@@ -4,55 +4,67 @@ using UnityEngine;
 
 public class PlayerMotion : MonoBehaviour
 {
-    Rigidbody rb;
-
-    [SerializeField]
-    float moveSpeed, maxSpeed;
-
-    [SerializeField]
-    float groundDrag;
-
-    [SerializeField]
-    float playerHeight;
-    [SerializeField]
-    LayerMask ground;
-    [SerializeField]
-    bool grounded;
-
     Vector3 inputForward;
 
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
 
     private void Update()
-    {
-        RaycastHit hit;
-        grounded = Physics.SphereCast(transform.position, 0.5f, Vector3.down, out hit, (playerHeight * 0.5f) + 0.2f, ground);
+    {   
+        //Get Input
+        Vector3 input = PlayerManager.instance.moveInput;
 
-        Vector3 input = PlayerManager.instance.GetMoveInput();
+        Vector3 cameraForward = PlayerManager.instance.cameraForwardVector;
 
-        Vector3 cameraForward = PlayerManager.instance.GetCameraForwardVector();
+        inputForward = new Vector3();
 
-        inputForward = cameraForward * input.y + Vector3.Cross(cameraForward, Vector3.up) * -input.x;
-
-        Vector3 horizontalVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-        if (horizontalVel.magnitude > maxSpeed)
+        if (PlayerManager.instance.grounded)
         {
-            horizontalVel = horizontalVel.normalized * maxSpeed;
-            rb.velocity = new Vector3(horizontalVel.x, rb.velocity.y, horizontalVel.z);
+            inputForward = cameraForward * input.y + Vector3.Cross(cameraForward, Vector3.up) * -input.x;
         }
 
-        if (grounded)
-            rb.drag = groundDrag;
+        if (PlayerManager.instance.OnSlope() && !PlayerManager.instance.exitingSlope)
+        {
+            if (PlayerManager.instance.rb.velocity.magnitude > GameManager.instance.currentWorldData.GetMoveSpeed())
+            {
+                PlayerManager.instance.rb.velocity = PlayerManager.instance.rb.velocity.normalized * GameManager.instance.currentWorldData.GetMoveSpeed();
+            }
+        }
         else
-            rb.drag = 0f;
+        {
+            //get horizontal vel
+            Vector3 horizontalVel = new Vector3(PlayerManager.instance.rb.velocity.x, 0f, PlayerManager.instance.rb.velocity.z);
+
+            //cap movespeed
+            if (horizontalVel.magnitude > GameManager.instance.currentWorldData.GetMoveSpeed())
+            {
+                horizontalVel = horizontalVel.normalized * GameManager.instance.currentWorldData.GetMoveSpeed();
+                PlayerManager.instance.rb.velocity = new Vector3(horizontalVel.x, PlayerManager.instance.rb.velocity.y, horizontalVel.z);
+            }
+        }
+        //check if normal or no drag should be used
+        if (PlayerManager.instance.grounded)
+            PlayerManager.instance.rb.drag = PlayerManager.instance.groundDrag;
+        else
+            PlayerManager.instance.rb.drag = 0f;
     }
 
     private void FixedUpdate()
     {
-        rb.AddForce(inputForward * moveSpeed * 10f); //add other stat stuff here
+        RaycastHit slopeHit;
+        if (PlayerManager.instance.OnSlope(out slopeHit) && !PlayerManager.instance.exitingSlope)
+        {
+            PlayerManager.instance.rb.AddForce(Vector3.ProjectOnPlane(inputForward, slopeHit.normal) * GameManager.instance.currentWorldData.GetMoveSpeed() * 15f, ForceMode.Force);
+
+            if (Mathf.Abs(PlayerManager.instance.rb.velocity.y) > 0)
+                PlayerManager.instance.rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+        }
+        else
+        {
+            if (PlayerManager.instance.grounded)
+                PlayerManager.instance.rb.AddForce(inputForward * GameManager.instance.currentWorldData.GetMoveSpeed() * 10f, ForceMode.Force);
+            else
+                PlayerManager.instance.rb.AddForce(inputForward * GameManager.instance.currentWorldData.GetMoveSpeed() * 10f * PlayerManager.instance.airMultiplier, ForceMode.Force);
+        }
+
+        PlayerManager.instance.rb.useGravity = !PlayerManager.instance.OnSlope();
     }
 }

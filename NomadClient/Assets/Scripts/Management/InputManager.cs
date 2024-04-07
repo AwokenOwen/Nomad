@@ -9,17 +9,21 @@ public class InputManager : MonoBehaviour
 
     InputAction movementAction;
     InputAction cameraAction;
+    InputAction jumpAction;
 
     private void Awake()
     {
         inputActions = new PlayerActions();
         movementAction = inputActions.Locomotion.Movement;
         cameraAction = inputActions.Locomotion.Camera;
+        jumpAction = inputActions.Locomotion.Jump;
 
         movementAction.performed += OnMove;
         movementAction.canceled += OnMove;
         cameraAction.performed += OnCam;
         cameraAction.canceled += OnCam;
+        jumpAction.performed += OnJump;
+        jumpAction.canceled += OnJump;
     }
 
     private void OnEnable()
@@ -33,6 +37,8 @@ public class InputManager : MonoBehaviour
         movementAction.canceled -= OnMove;
         cameraAction.performed -= OnCam;
         cameraAction.canceled -= OnCam;
+        jumpAction.performed -= OnJump;
+        jumpAction.canceled -= OnJump;
 
         inputActions.Disable();
     }
@@ -45,5 +51,10 @@ public class InputManager : MonoBehaviour
     private void OnCam(InputAction.CallbackContext context)
     {
         PlayerManager.instance.SetCamInput(context.ReadValue<Vector2>());
+    }
+
+    private void OnJump(InputAction.CallbackContext context)
+    {
+        PlayerManager.instance.CallJump(context.performed);
     }
 }

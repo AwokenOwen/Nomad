@@ -16,6 +16,7 @@ public class PlayerData
 {
     public InventoryData PlayerInventory;
     public StatsData PlayerStats;
+    public AbilityData Abilities;
 
     public Vector3 Position;
 
@@ -23,6 +24,7 @@ public class PlayerData
     {
         this.PlayerInventory = new InventoryData();
         this.PlayerStats = new StatsData();
+        this.Abilities = new AbilityData(new JumpData(BASE_STATS.JUMP_FORCE));
 
         this.Position = Position;
     }

@@ -1936,10 +1936,10 @@ RectTransform:
   - {fileID: 1982390434}
   m_Father: {fileID: 713806536}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 739.8093}
+  m_AnchorMin: {x: 0.5, y: 0.15685168}
+  m_AnchorMax: {x: 0.5, y: 0.84300005}
+  m_AnchoredPosition: {x: 0, y: 0.5}
+  m_SizeDelta: {x: 1920, y: -1.1906738}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &598230359
 MonoBehaviour:
@@ -4420,6 +4420,8 @@ MonoBehaviour:
         currentStamina: 0
         maxStamina: 0
       Position: {x: 0, y: 0, z: 0}
+    settingsData:
+      Sensitivity: 0.01
     spawnPoint: {x: 0, y: 0, z: 0}
 --- !u!4 &1189447688
 Transform:
@@ -6559,8 +6561,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1189447687}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+      - m_Target: {fileID: 1959248427}
+        m_TargetAssemblyTypeName: MainMenuUIManager, Assembly-CSharp
         m_MethodName: DeleteWorld
         m_Mode: 1
         m_Arguments:

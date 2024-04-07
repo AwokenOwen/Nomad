@@ -31,7 +31,7 @@ public class InventoryData
 
         foreach (var item in savedItems)
         {
-            items.Add(item.data, item.count);
+            items.Add(ITEMS.GetItemFromName(item.data.name), item.count);
         }
     }
 
