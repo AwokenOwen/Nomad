@@ -43,6 +43,11 @@ public class WorldData
         return settingsData.Sensitivity;
     }
 
+    public void setSens(float sens)
+    {
+        settingsData.Sensitivity = sens;
+    }
+
     public void AddItem(ItemData data)
     {
         playerData.PlayerInventory.AddItem(data, 1);

@@ -38,8 +38,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        currentGameState = GameStates.SingleplayerWorld;
-        OpenSingleplayerWorld("Apple");
+        currentGameState = GameStates.MainMenu;
     }
 
     private void Update()
@@ -83,7 +82,10 @@ public class GameManager : MonoBehaviour
         
     }
 
-
+    public void setSens(float sens)
+    {
+        currentWorldData.setSens(sens);
+    }
     #endregion
 
     private void OnApplicationQuit()

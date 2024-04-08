@@ -132,21 +132,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public Vector3 JumpUpVector()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, (playerHeight * 0.5f) + 0.3f))
-        {
-            Vector3 midpoint = (hit.normal + Vector3.up) / 2f;
-
-            return midpoint.normalized;
-        }
-        else
-        {
-            return transform.up;
-        }
-    }
-
     [SerializeField]
     float maxSlopeAngle;
 
