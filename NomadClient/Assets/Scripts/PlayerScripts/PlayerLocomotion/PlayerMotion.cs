@@ -52,19 +52,44 @@ public class PlayerMotion : MonoBehaviour
         RaycastHit slopeHit;
         if (PlayerManager.instance.OnSlope(out slopeHit) && !PlayerManager.instance.exitingSlope)
         {
-            PlayerManager.instance.rb.AddForce(Vector3.ProjectOnPlane(inputForward, slopeHit.normal) * GameManager.instance.currentWorldData.GetMoveSpeed() * 15f, ForceMode.Force);
-
-            if (Mathf.Abs(PlayerManager.instance.rb.velocity.y) > 0)
-                PlayerManager.instance.rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+            MoveCharacterSlope(Vector3.ProjectOnPlane(inputForward, slopeHit.normal));
         }
         else
         {
-            if (PlayerManager.instance.grounded)
-                PlayerManager.instance.rb.AddForce(inputForward * GameManager.instance.currentWorldData.GetMoveSpeed() * 10f, ForceMode.Force);
+            //if capsule cast toward direction add force in direction of project on plane with normal with y = 0f; 
+            Vector3 point1 = transform.position + (Vector3.up * ((PlayerManager.instance.playerHeight / 2f)));
+            Vector3 point2 = transform.position + (Vector3.down * ((PlayerManager.instance.playerHeight / 2f)));
+
+            RaycastHit hit;
+            if (Physics.CapsuleCast(point1, point2, 0.25f, inputForward, out hit, 0.3f, PlayerManager.instance.groundMask))
+            {
+                Vector3 newNormal = hit.normal;
+                newNormal.y = 0f;
+                newNormal.Normalize();
+                MoveCharacter(Vector3.ProjectOnPlane(inputForward, newNormal));
+            }
             else
-                PlayerManager.instance.rb.AddForce(inputForward * GameManager.instance.currentWorldData.GetMoveSpeed() * 10f * PlayerManager.instance.airMultiplier, ForceMode.Force);
+            {
+                MoveCharacter(inputForward);
+            }
         }
 
         PlayerManager.instance.rb.useGravity = !PlayerManager.instance.OnSlope();
+    }
+
+    private void MoveCharacter(Vector3 dir)
+    {
+        if (PlayerManager.instance.grounded)
+            PlayerManager.instance.rb.AddForce(dir * GameManager.instance.currentWorldData.GetMoveSpeed() * 10f, ForceMode.Force);
+        else
+            PlayerManager.instance.rb.AddForce(dir * GameManager.instance.currentWorldData.GetMoveSpeed() * 10f * PlayerManager.instance.airMultiplier, ForceMode.Force);
+    }
+
+    private void MoveCharacterSlope(Vector3 dir)
+    {
+        PlayerManager.instance.rb.AddForce(dir * GameManager.instance.currentWorldData.GetMoveSpeed() * 10f, ForceMode.Force);
+
+        if (Mathf.Abs(PlayerManager.instance.rb.velocity.y) > 0)
+            PlayerManager.instance.rb.AddForce(Vector3.down * 60f, ForceMode.Force);
     }
 }

@@ -51,9 +51,9 @@ public class CameraController : MonoBehaviour
     {
         Vector2 camInput = PlayerManager.instance.camInput;
 
-        phi -= camInput.y * .01f;//SETTINGS.SENSITIVITY;
+        phi -= camInput.y * SETTINGS.SENSITIVITY;//SETTINGS.SENSITIVITY;
         phi = Mathf.Clamp(phi, 0.2f, Mathf.PI - 0.2f);
-        theta -= camInput.x * .01f;//SETTINGS.SENSITIVITY;
+        theta -= camInput.x * SETTINGS.SENSITIVITY;//SETTINGS.SENSITIVITY;
         theta = theta % (2 * Mathf.PI);
 
         Vector3 dir = CartesianFromSphere(1, phi, theta);
@@ -69,8 +69,12 @@ public class CameraController : MonoBehaviour
         {
             cameraPositionTarget.position = cameraLookTarget.position + CartesianFromSphere(maxRho, phi, theta);
         }
-
         cam.transform.position = Vector3.Lerp(cam.transform.position, cameraPositionTarget.position, 0.5f);
+
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, 1f, mask))
+        {
+            transform.position += new Vector3(0, 1f, 0);
+        }
 
         cam.transform.LookAt(cameraLookTarget);
 

@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         currentGameState = GameStates.SingleplayerWorld;
-        currentWorldData = new WorldData("Apple");
+        OpenSingleplayerWorld("Apple");
     }
 
     private void Update()

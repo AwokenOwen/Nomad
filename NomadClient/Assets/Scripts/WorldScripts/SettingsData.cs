@@ -9,6 +9,6 @@ public class SettingsData
 
     public SettingsData() 
     { 
-        Sensitivity = 0.01f;
+        Sensitivity = 0.001f;
     }
 }

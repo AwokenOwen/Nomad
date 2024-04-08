@@ -28,8 +28,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     float jumpCooldown;
 
-    [SerializeField]
-    Animator bodyAnimator;
+
+    [field: SerializeField] public Animator bodyAnimator {  get; private set; }
 
     public bool exitingSlope {  get; private set; }
 
@@ -47,8 +47,8 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        /*Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;*/
 
         transform.position = GameManager.instance.currentWorldData.GetSpawn();
 
@@ -63,14 +63,25 @@ public class PlayerManager : MonoBehaviour
     private void Update()
     {
         RaycastHit hit;
-        grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, (playerHeight * 0.5f), groundMask);
+        grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, (playerHeight * 0.5f) + 0.3f, groundMask);
     }
 
     private void FixedUpdate()
     {
+        bodyAnimator.SetBool("Grounded", grounded);
+
         if (jumping && readyToJump && grounded)
         {
             readyToJump = false;
+
+            if (moveInput.magnitude > 0)
+            {
+                bodyAnimator.Play("JumpWhileRunning");
+            }
+            else
+            {
+                bodyAnimator.Play("Jump_Up");
+            }
 
             abilities.JumpData.OnHold();
 
@@ -124,7 +135,7 @@ public class PlayerManager : MonoBehaviour
     public Vector3 JumpUpVector()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, playerHeight * 0.5f + 1f))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, (playerHeight * 0.5f) + 0.3f))
         {
             Vector3 midpoint = (hit.normal + Vector3.up) / 2f;
 
@@ -141,7 +152,7 @@ public class PlayerManager : MonoBehaviour
 
     public bool OnSlope(out RaycastHit slopeHit)
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, (playerHeight * 0.5f) + 0.3f, groundMask))
+        if (Physics.SphereCast(transform.position, 0.3f, Vector3.down, out slopeHit, (playerHeight * 0.5f) + 0.3f, groundMask))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopeAngle && angle != 0;
@@ -152,7 +163,7 @@ public class PlayerManager : MonoBehaviour
     public bool OnSlope()
     {
         RaycastHit slopeHit;
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, (playerHeight * 0.5f) + 0.3f, groundMask))
+        if (Physics.SphereCast(transform.position, 0.3f, Vector3.down, out slopeHit, (playerHeight * 0.5f) + 0.3f, groundMask))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopeAngle && angle != 0;
