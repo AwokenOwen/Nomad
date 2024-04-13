@@ -4384,6 +4384,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1189447688}
   - component: {fileID: 1189447687}
+  - component: {fileID: 1189447689}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4441,6 +4442,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1189447689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189447686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 760c7c2b84b83e8478d7543ceb74e3de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1214222756
 GameObject:
   m_ObjectHideFlags: 0
@@ -5870,6 +5883,7 @@ GameObject:
   - component: {fileID: 1611389117}
   - component: {fileID: 1611389116}
   - component: {fileID: 1611389119}
+  - component: {fileID: 1611389120}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -5995,6 +6009,27 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!135 &1611389120
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1611389115}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1629293996
 GameObject:
   m_ObjectHideFlags: 0
@@ -6479,12 +6514,10 @@ MonoBehaviour:
   m_ActionsAsset: {fileID: -944628639613478452, guid: 8cba7a284895a344f83f1bd98fffa4d3,
     type: 3}
   m_PointAction: {fileID: 0}
-  m_MoveAction: {fileID: -9118365238441141123, guid: 8cba7a284895a344f83f1bd98fffa4d3,
-    type: 3}
+  m_MoveAction: {fileID: 0}
   m_SubmitAction: {fileID: -2664050673235488873, guid: 8cba7a284895a344f83f1bd98fffa4d3,
     type: 3}
-  m_CancelAction: {fileID: 354447299405373999, guid: 8cba7a284895a344f83f1bd98fffa4d3,
-    type: 3}
+  m_CancelAction: {fileID: 0}
   m_LeftClickAction: {fileID: 0}
   m_MiddleClickAction: {fileID: 0}
   m_RightClickAction: {fileID: 0}
@@ -7156,6 +7189,17 @@ MonoBehaviour:
   SingleplayerMenu: {fileID: 713806535}
   MultiplayerMenu: {fileID: 1004739949}
   NewSingleplayerWorldMenu: {fileID: 753374868}
+  eventSystem: {fileID: 1799203161}
+  MainMenuButtons:
+  - {fileID: 866344597}
+  - {fileID: 638893470}
+  - {fileID: 1596145418}
+  SingleplayerTopRow:
+  - {fileID: 1273537538}
+  - {fileID: 771442399}
+  SingleplayerBottomRow:
+  - {fileID: 677568671}
+  - {fileID: 1849192762}
   worldSaveObjects: []
   worldSavePrefab: {fileID: 4823908357885734447, guid: 322477f5178c56b45b6e4363026d3e39,
     type: 3}

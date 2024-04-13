@@ -48,11 +48,30 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        switch (mode)
+        {
+            case CameraMode.Normal:
+                NormalUpdate();
+                break;
+            case CameraMode.FreeForm:
+                break;
+        }
+    }
+
+    void NormalUpdate()
+    {
+        cam.transform.position = cameraPositionTarget.position;
+
+        cam.transform.LookAt(cameraLookTarget);
+    }
+
     void NormalFixedUpdate()
     {
         Vector2 camInput = PlayerManager.instance.camInput;
 
-        phi += camInput.y * SETTINGS.SENSITIVITY;
+        phi -= camInput.y * SETTINGS.SENSITIVITY;
         phi = Mathf.Clamp(phi, 0.2f, Mathf.PI - 0.2f);
         theta -= camInput.x * SETTINGS.SENSITIVITY;
         theta = theta % (2 * Mathf.PI);
@@ -73,9 +92,6 @@ public class CameraController : MonoBehaviour
         {
             cameraPositionTarget.position = cameraLookTarget.position + CartesianFromSphere(maxRho, phi, theta);
         }
-        cam.transform.position = Vector3.Lerp(cam.transform.position, cameraPositionTarget.position, 0.5f);
-
-        cam.transform.LookAt(cameraLookTarget);
 
         Vector3 cameraForwardVector = cam.transform.forward;
         cameraForwardVector.y = 0f;

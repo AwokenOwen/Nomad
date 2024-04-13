@@ -11,7 +11,14 @@ public class SingleplayerMenuUIManager : MonoBehaviour
     [SerializeField]
     private Slider SensSlider;
 
-    // Start is called before the first frame update
+    [SerializeField]
+    private GameObject PauseMenu;
+
+    private void Awake()
+    {
+        PlayerManager.OpenPauseMenuEvent += OpenPauseMenu;
+    }
+
     void Start()
     {
         SensSlider.maxValue = 10f;
@@ -21,7 +28,6 @@ public class SingleplayerMenuUIManager : MonoBehaviour
         SensSlider.value = SETTINGS.SENSITIVITY * 100f;
     }
 
-    // Update is called once per frame
     void Update()
     {
         float sensValue = SETTINGS.SENSITIVITY * 100f;
@@ -29,5 +35,10 @@ public class SingleplayerMenuUIManager : MonoBehaviour
         SensValueText.text = sensValue.ToString("0.00");
 
         GameManager.instance.setSens(SensSlider.value / 100);
+    }
+
+    void OpenPauseMenu()
+    {
+        PauseMenu.SetActive(true);
     }
 }

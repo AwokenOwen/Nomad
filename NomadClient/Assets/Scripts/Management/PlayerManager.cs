@@ -33,6 +33,9 @@ public class PlayerManager : MonoBehaviour
 
     public bool exitingSlope {  get; private set; }
 
+    public delegate void OpenPauseMenuAction();
+    public static event OpenPauseMenuAction OpenPauseMenuEvent;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -154,5 +157,10 @@ public class PlayerManager : MonoBehaviour
             return angle < maxSlopeAngle && angle != 0;
         }
         return false;
+    }
+
+    public void OpenPauseMenu()
+    {
+        OpenPauseMenuEvent();
     }
 }

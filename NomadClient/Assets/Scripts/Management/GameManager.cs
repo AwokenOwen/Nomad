@@ -18,10 +18,8 @@ public class GameManager : MonoBehaviour
 
     public WorldData currentWorldData;
 
-
-    #region MainMenu
-    public delegate void WorldSelectAction(string name);
-    #endregion
+    public delegate void ChangeInputStateAction(InputMode mode);
+    public static event ChangeInputStateAction ChangeInputEvent;
 
     private void Awake()
     {
@@ -73,6 +71,8 @@ public class GameManager : MonoBehaviour
         currentGameState = GameStates.SingleplayerWorld;
         //load singleplayer scene
         SceneManager.LoadScene("SingleplayerWorld");
+
+        ChangeInput(InputMode.Game);
     }
     #endregion
 
@@ -101,5 +101,10 @@ public class GameManager : MonoBehaviour
             case GameStates.MultiplayerWorld:
                 break;
         }
+    }
+
+    public void ChangeInput(InputMode mode)
+    {
+        ChangeInputEvent(mode);
     }
 }

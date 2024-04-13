@@ -13,12 +13,18 @@ public class InputManager : MonoBehaviour
 {
     PlayerActions inputActions;
 
+    //Locomotion inputs
     InputAction movementAction;
     InputAction cameraAction;
     InputAction jumpAction;
+    InputAction escapeAction;
+
+    //Menu inputs
+
 
     private void Awake()
     {
+        GameManager.ChangeInputEvent += SwitchInputMode;
 
         inputActions = new PlayerActions();
 
@@ -26,6 +32,7 @@ public class InputManager : MonoBehaviour
         movementAction = inputActions.Locomotion.Movement;
         cameraAction = inputActions.Locomotion.Camera;
         jumpAction = inputActions.Locomotion.Jump;
+        escapeAction = inputActions.Locomotion.Escape;
 
         movementAction.performed += OnMove;
         movementAction.canceled += OnMove;
@@ -33,13 +40,16 @@ public class InputManager : MonoBehaviour
         cameraAction.canceled += OnCam;
         jumpAction.performed += OnJump;
         jumpAction.canceled += OnJump;
+        escapeAction.performed += OnEscape;
 
         //Menu inputs
     }
 
     private void OnEnable()
     {
-        inputActions.Locomotion.Enable();
+        inputActions.Menu.Enable();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void OnDisable()
@@ -51,6 +61,7 @@ public class InputManager : MonoBehaviour
         cameraAction.canceled -= OnCam;
         jumpAction.performed -= OnJump;
         jumpAction.canceled -= OnJump;
+        escapeAction.performed -= OnEscape;
 
         //Menu inputs
 
@@ -61,6 +72,7 @@ public class InputManager : MonoBehaviour
     private void Disable()
     {
         inputActions.Locomotion.Disable();
+        inputActions.Menu.Enable();
     }
 
     public void SwitchInputMode(InputMode newMode)
@@ -72,6 +84,7 @@ public class InputManager : MonoBehaviour
                 inputActions.Locomotion.Enable();
                 break;
             case InputMode.Menu:
+                inputActions.Menu.Enable();
                 break;
         }
     }
@@ -89,5 +102,11 @@ public class InputManager : MonoBehaviour
     private void OnJump(InputAction.CallbackContext context)
     {
         PlayerManager.instance.CallJump(context.performed);
+    }
+
+    private void OnEscape(InputAction.CallbackContext context)
+    {
+        SwitchInputMode(InputMode.Menu);
+        PlayerManager.instance.OpenPauseMenu();
     }
 }

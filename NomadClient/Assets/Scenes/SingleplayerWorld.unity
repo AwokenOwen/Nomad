@@ -2292,7 +2292,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2663,6 +2663,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1216441297}
   - component: {fileID: 1216441298}
+  - component: {fileID: 1216441299}
   m_Layer: 0
   m_Name: TempGameManager
   m_TagString: Untagged
@@ -2720,6 +2721,18 @@ MonoBehaviour:
     settingsData:
       Sensitivity: 0.01
     spawnPoint: {x: 0, y: 0, z: 0}
+--- !u!114 &1216441299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1216441296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 760c7c2b84b83e8478d7543ceb74e3de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1236176932
 GameObject:
   m_ObjectHideFlags: 0
@@ -3610,7 +3623,6 @@ GameObject:
   - component: {fileID: 1501731472}
   - component: {fileID: 1501731471}
   - component: {fileID: 1501731466}
-  - component: {fileID: 1501731468}
   - component: {fileID: 1501731467}
   - component: {fileID: 1501731470}
   m_Layer: 0
@@ -3675,18 +3687,6 @@ MonoBehaviour:
   jumpCooldown: 0.25
   <bodyAnimator>k__BackingField: {fileID: 907346482}
   maxSlopeAngle: 40
---- !u!114 &1501731468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1501731463}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 760c7c2b84b83e8478d7543ceb74e3de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1501731470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3702,6 +3702,8 @@ MonoBehaviour:
   cameraLookTarget: {fileID: 514091539}
   cameraPositionTarget: {fileID: 2041775068}
   maxRho: 5
+  phi: 0
+  theta: 0
   cam: {fileID: 1081028886}
   mask:
     serializedVersion: 2
@@ -3730,7 +3732,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!136 &1501731472
@@ -4293,6 +4295,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SensValueText: {fileID: 1620375086}
   SensSlider: {fileID: 161702001}
+  PauseMenu: {fileID: 1181352074}
 --- !u!4 &2099995708
 Transform:
   m_ObjectHideFlags: 0
