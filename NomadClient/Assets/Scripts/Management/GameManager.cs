@@ -21,6 +21,12 @@ public class GameManager : MonoBehaviour
     public delegate void ChangeInputStateAction(InputMode mode);
     public static event ChangeInputStateAction ChangeInputEvent;
 
+    public delegate void MenuNavigationAction(Vector2 input);
+    public static event MenuNavigationAction MenuNavigationEvent;
+
+    public delegate void MenuSubmitAction();
+    public static event MenuSubmitAction MenuSubmitEvent;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -106,5 +112,15 @@ public class GameManager : MonoBehaviour
     public void ChangeInput(InputMode mode)
     {
         ChangeInputEvent(mode);
+    }
+
+    public void MenuNavigate(Vector2 input)
+    {
+        MenuNavigationEvent(input);
+    }
+
+    public void MenuSubmit()
+    {
+        MenuSubmitEvent();
     }
 }

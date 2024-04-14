@@ -20,7 +20,8 @@ public class InputManager : MonoBehaviour
     InputAction escapeAction;
 
     //Menu inputs
-
+    InputAction menuNavigationAction;
+    InputAction menuSubmitAction;
 
     private void Awake()
     {
@@ -43,6 +44,11 @@ public class InputManager : MonoBehaviour
         escapeAction.performed += OnEscape;
 
         //Menu inputs
+        menuNavigationAction = inputActions.Menu.Navigation;
+        menuSubmitAction = inputActions.Menu.Select;
+
+        menuNavigationAction.performed += OnNavigation;
+        menuSubmitAction.performed += OnSubmit;
     }
 
     private void OnEnable()
@@ -64,7 +70,8 @@ public class InputManager : MonoBehaviour
         escapeAction.performed -= OnEscape;
 
         //Menu inputs
-
+        menuNavigationAction.performed -= OnNavigation;
+        menuSubmitAction.performed -= OnSubmit;
 
         Disable();
     }
@@ -72,7 +79,7 @@ public class InputManager : MonoBehaviour
     private void Disable()
     {
         inputActions.Locomotion.Disable();
-        inputActions.Menu.Enable();
+        inputActions.Menu.Disable();
     }
 
     public void SwitchInputMode(InputMode newMode)
@@ -108,5 +115,17 @@ public class InputManager : MonoBehaviour
     {
         SwitchInputMode(InputMode.Menu);
         PlayerManager.instance.OpenPauseMenu();
+    }
+
+    private void OnNavigation(InputAction.CallbackContext context)
+    {
+        Vector2 input = context.ReadValue<Vector2>();
+
+        GameManager.instance.MenuNavigate(input);
+    }
+
+    private void OnSubmit(InputAction.CallbackContext context)
+    {
+        GameManager.instance.MenuSubmit();
     }
 }

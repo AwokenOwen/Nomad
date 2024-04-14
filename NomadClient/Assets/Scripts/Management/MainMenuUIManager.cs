@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 
 public enum MenuState
 {
@@ -52,7 +53,21 @@ public class MainMenuUIManager : MonoBehaviour
     public TMP_Text deleteWorldText;
 
     string selectedWorld;
+
+    int currentSelectedIndex;
     #endregion
+
+    private void Awake()
+    {
+        GameManager.MenuNavigationEvent += Navigation;
+        GameManager.MenuSubmitEvent += Submit;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.MenuNavigationEvent -= Navigation;
+        GameManager.MenuSubmitEvent -= Submit;
+    }
 
     private void Start()
     {
@@ -60,7 +75,7 @@ public class MainMenuUIManager : MonoBehaviour
         OpenMainMenu();
         menuState = MenuState.MainMenu;
         eventSystem.SetSelectedGameObject(MainMenuButtons[0]);
-        
+        currentSelectedIndex = 0;
     }
 
     #region Menu Transition
@@ -89,6 +104,9 @@ public class MainMenuUIManager : MonoBehaviour
         CloseAll();
         SingleplayerMenu.SetActive(true);
         InstantiateWorldSaveObjects();
+        menuState = MenuState.SingleplayerNonSelected;
+        currentSelectedIndex = 0;
+        eventSystem.SetSelectedGameObject(SingleplayerTopRow[0]);
     }
     public void OpenMainMenu()
     {
@@ -104,6 +122,7 @@ public class MainMenuUIManager : MonoBehaviour
 
     #endregion
 
+    #region Singleplayer World Management
     public void CreateNewWorld()
     {
         if (FileManager.checkIfValidWorldName(newSingleplayerWorldNameField.text))
@@ -131,10 +150,10 @@ public class MainMenuUIManager : MonoBehaviour
             }
         }
 
-        openWorldButton.interactable = true;
+        /*openWorldButton.interactable = true;
         openWorldText.alpha = 1f;
         deleteWorldButton.interactable = true;
-        deleteWorldText.alpha = 1f;
+        deleteWorldText.alpha = 1f;*/
     }
 
     void WorldDeselect()
@@ -179,17 +198,79 @@ public class MainMenuUIManager : MonoBehaviour
         RefreshWorlds();
     }
 
-    public void nextSelectedItem()
+    #endregion
+
+    void Navigation(Vector2 input)
     {
         switch (menuState)
         {
             case MenuState.MainMenu:
+                currentSelectedIndex -= Mathf.RoundToInt(input.y);
+                if (currentSelectedIndex < 0)
+                    currentSelectedIndex = MainMenuButtons.Length - 1;
+                currentSelectedIndex = currentSelectedIndex % MainMenuButtons.Length;
+                eventSystem.SetSelectedGameObject(MainMenuButtons[currentSelectedIndex]);
                 break;
             case MenuState.SingleplayerNonSelected:
+                if (input.y < 0 && worldSaveObjects.Count > 0)
+                {
+                    eventSystem.SetSelectedGameObject(null);
+                    menuState = MenuState.SingleplayerSelect;
+                    currentSelectedIndex = 0;
+                    WorldSelected(worldSaveObjects[0].worldTitle.text);
+                    worldSaveObjects[0].selectedImage.SetActive(true);
+                    break;
+                }
+                currentSelectedIndex -= Mathf.RoundToInt(input.x);
+                if (currentSelectedIndex < 0)
+                    currentSelectedIndex = SingleplayerTopRow.Length - 1;
+                currentSelectedIndex = currentSelectedIndex % SingleplayerTopRow.Length;
+                eventSystem.SetSelectedGameObject(SingleplayerTopRow[currentSelectedIndex]);
                 break;
             case MenuState.SingleplayerSelect:
+                currentSelectedIndex -= Mathf.RoundToInt(input.y);
+                if (currentSelectedIndex < 0)
+                {
+                    menuState = MenuState.SingleplayerNonSelected;
+                    currentSelectedIndex = 0;
+                    eventSystem.SetSelectedGameObject(SingleplayerTopRow[0]);
+                }
+                currentSelectedIndex = currentSelectedIndex % worldSaveObjects.Count;
+                WorldSelected(worldSaveObjects[currentSelectedIndex].worldTitle.text);
+                worldSaveObjects[currentSelectedIndex].selectedImage.SetActive(true);
                 break;
             case MenuState.SingleplayerSelected:
+                currentSelectedIndex -= Mathf.RoundToInt(input.x);
+                if (currentSelectedIndex < 0)
+                    currentSelectedIndex = SingleplayerBottomRow.Length - 1;
+                currentSelectedIndex = currentSelectedIndex % SingleplayerBottomRow.Length;
+                eventSystem.SetSelectedGameObject(SingleplayerBottomRow[currentSelectedIndex]);
+                break;
+        }
+    }
+
+    void Submit()
+    {
+        switch (menuState)
+        {
+            case MenuState.MainMenu:
+                eventSystem.currentSelectedGameObject.GetComponent<Button>().onClick.Invoke();
+                break;
+            case MenuState.SingleplayerNonSelected:
+                eventSystem.currentSelectedGameObject.GetComponent<Button>().onClick.Invoke();
+                break;
+            case MenuState.SingleplayerSelect:
+                openWorldButton.interactable = true;
+                openWorldText.alpha = 1f;
+                deleteWorldButton.interactable = true;
+                deleteWorldText.alpha = 1f;
+
+                eventSystem.SetSelectedGameObject(SingleplayerBottomRow[0]);
+                currentSelectedIndex = 0;
+                menuState = MenuState.SingleplayerSelected;
+                break;
+            case MenuState.SingleplayerSelected:
+                eventSystem.currentSelectedGameObject.GetComponent<Button>().onClick.Invoke();
                 break;
         }
     }

@@ -71,7 +71,7 @@ public class CameraController : MonoBehaviour
     {
         Vector2 camInput = PlayerManager.instance.camInput;
 
-        phi -= camInput.y * SETTINGS.SENSITIVITY;
+        phi += camInput.y * SETTINGS.SENSITIVITY;
         phi = Mathf.Clamp(phi, 0.2f, Mathf.PI - 0.2f);
         theta -= camInput.x * SETTINGS.SENSITIVITY;
         theta = theta % (2 * Mathf.PI);
@@ -84,9 +84,9 @@ public class CameraController : MonoBehaviour
 
         RaycastHit hit;
 
-        if(Physics.Raycast(cameraLookTarget.position, dir, out hit, maxRho + 15f, mask))
+        if (Physics.SphereCast(cameraLookTarget.position, 0.31f, dir, out hit, maxRho + 1f, mask))
         {
-            cameraPositionTarget.position = cameraLookTarget.position + CartesianFromSphere(Mathf.Max(Mathf.Min(hit.distance - 1f, maxRho), 0.1f), phi, theta);
+            cameraPositionTarget.position = cameraLookTarget.position + (dir * Mathf.Max(0.01f, (hit.distance - 0.1f)));
         }
         else
         {
