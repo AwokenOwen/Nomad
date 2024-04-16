@@ -13,7 +13,8 @@ public enum MenuState
     MainMenu,
     SingleplayerNonSelected,
     SingleplayerSelect,
-    SingleplayerSelected
+    SingleplayerSelected,
+    SingleplayerNewGame,
 }
 
 public class MainMenuUIManager : MonoBehaviour
@@ -118,6 +119,9 @@ public class MainMenuUIManager : MonoBehaviour
     {
         CloseAll();
         NewSingleplayerWorldMenu.SetActive(true);
+        currentSelectedIndex = 0;
+        menuState = MenuState.SingleplayerNewGame;
+        eventSystem.SetSelectedGameObject(newSingleplayerWorldNameField.gameObject);
     }
 
     #endregion
@@ -149,16 +153,11 @@ public class MainMenuUIManager : MonoBehaviour
                 obj.selectedImage.SetActive(false);
             }
         }
-
-        /*openWorldButton.interactable = true;
-        openWorldText.alpha = 1f;
-        deleteWorldButton.interactable = true;
-        deleteWorldText.alpha = 1f;*/
     }
 
     void WorldDeselect()
     {
-        selectedWorld = null;
+        WorldSelected("");
 
         openWorldButton.interactable = false;
         openWorldText.alpha = 87f/255f;
@@ -219,6 +218,7 @@ public class MainMenuUIManager : MonoBehaviour
                     currentSelectedIndex = 0;
                     WorldSelected(worldSaveObjects[0].worldTitle.text);
                     worldSaveObjects[0].selectedImage.SetActive(true);
+                    WorldDeselect();
                     break;
                 }
                 currentSelectedIndex -= Mathf.RoundToInt(input.x);
@@ -246,6 +246,9 @@ public class MainMenuUIManager : MonoBehaviour
                 currentSelectedIndex = currentSelectedIndex % SingleplayerBottomRow.Length;
                 eventSystem.SetSelectedGameObject(SingleplayerBottomRow[currentSelectedIndex]);
                 break;
+            case MenuState.SingleplayerNewGame:
+                //no navigation
+                break;
         }
     }
 
@@ -271,6 +274,9 @@ public class MainMenuUIManager : MonoBehaviour
                 break;
             case MenuState.SingleplayerSelected:
                 eventSystem.currentSelectedGameObject.GetComponent<Button>().onClick.Invoke();
+                break;
+            case MenuState.SingleplayerNewGame:
+                CreateNewWorld();
                 break;
         }
     }

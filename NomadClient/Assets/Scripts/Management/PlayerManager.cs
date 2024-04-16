@@ -23,17 +23,15 @@ public class PlayerManager : MonoBehaviour
 
     AbilityData abilities;
     [SerializeField] bool jumping;
-    [SerializeField] bool readyToJump;
 
     [SerializeField]
     float jumpCooldown;
-
 
     [field: SerializeField] public Animator bodyAnimator {  get; private set; }
 
     public bool exitingSlope {  get; private set; }
 
-    public delegate void OpenPauseMenuAction();
+    public delegate void OpenPauseMenuAction(bool open);
     public static event OpenPauseMenuAction OpenPauseMenuEvent;
 
     private void Awake()
@@ -50,33 +48,27 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
-        /*Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;*/
-
         transform.position = GameManager.instance.currentWorldData.GetSpawn();
 
         rb = GetComponent<Rigidbody>();
 
         abilities = GameManager.instance.currentWorldData.GetAbilities();
 
-        readyToJump = true;
         exitingSlope = false;
     }
 
     private void Update()
     {
         RaycastHit hit;
-        grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, (playerHeight * 0.5f) + 0.3f, groundMask);
+        grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, (playerHeight * 0.5f) + 0.2f, groundMask);
     }
 
     private void FixedUpdate()
     {
         bodyAnimator.SetBool("Grounded", grounded);
 
-        if (jumping && readyToJump && grounded)
+        if (jumping && grounded)
         {
-            readyToJump = false;
-
             if (moveInput.magnitude > 0)
             {
                 bodyAnimator.Play("JumpWhileRunning");
@@ -91,7 +83,7 @@ public class PlayerManager : MonoBehaviour
             Invoke(nameof(ResetJump), jumpCooldown);
         }
 
-        if (moveInput.magnitude > 0)
+        if (moveInput.y > 0)
         {
             bodyAnimator.transform.rotation = Quaternion.Slerp(bodyAnimator.transform.rotation, Quaternion.LookRotation(cameraForwardVector), 0.2f);
         }
@@ -102,8 +94,6 @@ public class PlayerManager : MonoBehaviour
 
     private void ResetJump()
     {
-        readyToJump = true;
-
         exitingSlope = false;
     }
 
@@ -161,6 +151,11 @@ public class PlayerManager : MonoBehaviour
 
     public void OpenPauseMenu()
     {
-        OpenPauseMenuEvent();
+        OpenPauseMenuEvent(true);
+    }
+
+    public void ClosePauseMenu()
+    {
+        OpenPauseMenuEvent(false);
     }
 }

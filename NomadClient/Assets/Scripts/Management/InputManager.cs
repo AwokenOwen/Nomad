@@ -22,6 +22,7 @@ public class InputManager : MonoBehaviour
     //Menu inputs
     InputAction menuNavigationAction;
     InputAction menuSubmitAction;
+    InputAction menuEscapeAction;
 
     private void Awake()
     {
@@ -41,14 +42,16 @@ public class InputManager : MonoBehaviour
         cameraAction.canceled += OnCam;
         jumpAction.performed += OnJump;
         jumpAction.canceled += OnJump;
-        escapeAction.performed += OnEscape;
+        escapeAction.performed += OnEscapeLocomotion;
 
         //Menu inputs
         menuNavigationAction = inputActions.Menu.Navigation;
         menuSubmitAction = inputActions.Menu.Select;
+        menuEscapeAction = inputActions.Menu.Escape;
 
         menuNavigationAction.performed += OnNavigation;
         menuSubmitAction.performed += OnSubmit;
+        menuEscapeAction.performed += OnEscapeMenu;
     }
 
     private void OnEnable()
@@ -67,11 +70,12 @@ public class InputManager : MonoBehaviour
         cameraAction.canceled -= OnCam;
         jumpAction.performed -= OnJump;
         jumpAction.canceled -= OnJump;
-        escapeAction.performed -= OnEscape;
+        escapeAction.performed -= OnEscapeLocomotion;
 
         //Menu inputs
         menuNavigationAction.performed -= OnNavigation;
         menuSubmitAction.performed -= OnSubmit;
+        menuEscapeAction.performed -= OnEscapeMenu;
 
         Disable();
     }
@@ -111,12 +115,18 @@ public class InputManager : MonoBehaviour
         PlayerManager.instance.CallJump(context.performed);
     }
 
-    private void OnEscape(InputAction.CallbackContext context)
+    private void OnEscapeLocomotion(InputAction.CallbackContext context)
     {
         SwitchInputMode(InputMode.Menu);
         PlayerManager.instance.OpenPauseMenu();
     }
 
+    private void OnEscapeMenu(InputAction.CallbackContext context)
+    {
+        SwitchInputMode(InputMode.Game);
+        PlayerManager.instance.ClosePauseMenu();
+    }
+    
     private void OnNavigation(InputAction.CallbackContext context)
     {
         Vector2 input = context.ReadValue<Vector2>();

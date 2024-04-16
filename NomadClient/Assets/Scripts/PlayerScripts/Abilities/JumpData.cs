@@ -14,12 +14,9 @@ public class JumpData: IJumps
 
     public virtual void OnHold()
     {
-        if (PlayerManager.instance.grounded)
-        {
-            PlayerManager.instance.rb.velocity = new Vector3(PlayerManager.instance.rb.velocity.x, 0f, PlayerManager.instance.rb.velocity.z);
+        PlayerManager.instance.rb.velocity = new Vector3(PlayerManager.instance.rb.velocity.x, 0f, PlayerManager.instance.rb.velocity.z);
 
-            PlayerManager.instance.rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        }
+        PlayerManager.instance.rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 
     public virtual void OnPress()

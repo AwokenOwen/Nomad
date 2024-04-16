@@ -87,9 +87,9 @@ public class PlayerMotion : MonoBehaviour
 
     private void MoveCharacterSlope(Vector3 dir)
     {
-        PlayerManager.instance.rb.AddForce(dir * GameManager.instance.currentWorldData.GetMoveSpeed() * 10f, ForceMode.Force);
+        PlayerManager.instance.rb.AddForce(dir * GameManager.instance.currentWorldData.GetMoveSpeed() * 15f, ForceMode.Force);
 
         if (Mathf.Abs(PlayerManager.instance.rb.velocity.y) > 0)
-            PlayerManager.instance.rb.AddForce(Vector3.down * 60f, ForceMode.Force);
+            PlayerManager.instance.rb.AddForce(Vector3.down * 80f, ForceMode.Force);
     }
 }

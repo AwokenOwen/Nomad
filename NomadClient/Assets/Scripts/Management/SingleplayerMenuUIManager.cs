@@ -37,8 +37,8 @@ public class SingleplayerMenuUIManager : MonoBehaviour
         GameManager.instance.setSens(SensSlider.value / 100);
     }
 
-    void OpenPauseMenu()
+    void OpenPauseMenu(bool open)
     {
-        PauseMenu.SetActive(true);
+        PauseMenu.SetActive(open);
     }
 }

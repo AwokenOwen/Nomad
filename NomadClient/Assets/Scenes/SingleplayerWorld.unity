@@ -3684,7 +3684,7 @@ MonoBehaviour:
   <airMultiplier>k__BackingField: 0.4
   jumping: 0
   readyToJump: 0
-  jumpCooldown: 0.25
+  jumpCooldown: 0.5
   <bodyAnimator>k__BackingField: {fileID: 907346482}
   maxSlopeAngle: 40
 --- !u!114 &1501731470

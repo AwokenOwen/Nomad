@@ -14,7 +14,7 @@ public enum GameStates
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public GameStates currentGameState { get; private set; }
+    [field: SerializeField] public GameStates currentGameState { get; private set; }
 
     public WorldData currentWorldData;
 
