@@ -158,4 +158,25 @@ public static class FileManager
 
         File.WriteAllText(path + "/saves/" + name + ".msav", metaData);
     }
+
+    public static void SaveSettings(SettingsData data)
+    {
+        string settings = JsonUtility.ToJson(data);
+
+        File.WriteAllText(path + "/settings.json", settings);
+    }
+
+    public static SettingsData getSettings()
+    {
+        if (File.Exists(path + "/settings.json"))
+        {
+            string settings = File.ReadAllText(path + "/settings.json");
+
+            return JsonUtility.FromJson<SettingsData>(settings);
+        }
+
+        SaveSettings(new SettingsData());
+
+        return getSettings();
+    }
 }

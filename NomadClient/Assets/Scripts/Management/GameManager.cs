@@ -16,7 +16,9 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     [field: SerializeField] public GameStates currentGameState { get; private set; }
 
+    //datas
     public WorldData currentWorldData;
+    [SerializeField] SettingsData settingsData;
 
     public delegate void ChangeInputStateAction(InputMode mode);
     public static event ChangeInputStateAction ChangeInputEvent;
@@ -43,6 +45,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         currentGameState = GameStates.MainMenu;
+        settingsData = FileManager.getSettings();
     }
 
     private void Update()
@@ -90,7 +93,12 @@ public class GameManager : MonoBehaviour
 
     public void setSens(float sens)
     {
-        currentWorldData.setSens(sens);
+        settingsData.Sensitivity = sens;
+    }
+
+    public float getSens()
+    {
+        return settingsData.Sensitivity;
     }
     #endregion
 
@@ -103,6 +111,7 @@ public class GameManager : MonoBehaviour
             case GameStates.SingleplayerWorld:
                 currentWorldData.saveWorld(PlayerManager.instance.transform.position);
                 FileManager.saveWorld(currentWorldData);
+                FileManager.SaveSettings(settingsData);
                 break;
             case GameStates.MultiplayerWorld:
                 break;

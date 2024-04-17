@@ -17,6 +17,8 @@ public class JumpData: IJumps
         PlayerManager.instance.rb.velocity = new Vector3(PlayerManager.instance.rb.velocity.x, 0f, PlayerManager.instance.rb.velocity.z);
 
         PlayerManager.instance.rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+        Debug.Log(PlayerManager.instance.rb.velocity.y);
     }
 
     public virtual void OnPress()

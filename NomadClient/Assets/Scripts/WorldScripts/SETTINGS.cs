@@ -4,5 +4,5 @@ using UnityEngine;
 
 public static class SETTINGS
 {
-    public static float SENSITIVITY => GameManager.instance.currentWorldData.getSens();
+    public static float SENSITIVITY => GameManager.instance.getSens();
 }

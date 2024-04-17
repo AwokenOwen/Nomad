@@ -2698,6 +2698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3fe25e76f0152a4d908f660bd900a8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <currentGameState>k__BackingField: 0
   currentWorldData:
     name: 
     playerData:
@@ -2718,9 +2719,9 @@ MonoBehaviour:
         JumpData:
           jumpForce: 0
       Position: {x: 0, y: 0, z: 0}
-    settingsData:
-      Sensitivity: 0.01
     spawnPoint: {x: 0, y: 0, z: 0}
+  settingsData:
+    Sensitivity: 0.005
 --- !u!114 &1216441299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3519,7 +3520,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1387031215
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3557,7 +3558,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1401412506
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3683,8 +3684,8 @@ MonoBehaviour:
   <grounded>k__BackingField: 0
   <airMultiplier>k__BackingField: 0.4
   jumping: 0
-  readyToJump: 0
-  jumpCooldown: 0.5
+  canJump: 1
+  jumpCooldown: 0.2
   <bodyAnimator>k__BackingField: {fileID: 907346482}
   maxSlopeAngle: 40
 --- !u!114 &1501731470

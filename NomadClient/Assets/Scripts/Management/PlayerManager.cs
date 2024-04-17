@@ -22,7 +22,7 @@ public class PlayerManager : MonoBehaviour
     [field: SerializeField] public float airMultiplier {  get; private set; }
 
     AbilityData abilities;
-    [SerializeField] bool jumping;
+    [SerializeField] bool jumping, canJump;
 
     [SerializeField]
     float jumpCooldown;
@@ -61,13 +61,10 @@ public class PlayerManager : MonoBehaviour
     {
         RaycastHit hit;
         grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, (playerHeight * 0.5f) + 0.2f, groundMask);
-    }
 
-    private void FixedUpdate()
-    {
         bodyAnimator.SetBool("Grounded", grounded);
 
-        if (jumping && grounded)
+        if (jumping && grounded && canJump)
         {
             if (moveInput.magnitude > 0)
             {
@@ -77,12 +74,16 @@ public class PlayerManager : MonoBehaviour
             {
                 bodyAnimator.Play("Jump_Up");
             }
+            canJump = false;
 
             abilities.JumpData.OnHold();
 
             Invoke(nameof(ResetJump), jumpCooldown);
         }
+    }
 
+    private void FixedUpdate()
+    {
         if (moveInput.y > 0)
         {
             bodyAnimator.transform.rotation = Quaternion.Slerp(bodyAnimator.transform.rotation, Quaternion.LookRotation(cameraForwardVector), 0.2f);
@@ -94,7 +95,15 @@ public class PlayerManager : MonoBehaviour
 
     private void ResetJump()
     {
-        exitingSlope = false;
+        if (grounded)
+        {
+            canJump = true;
+            exitingSlope = false;
+        }
+        else
+        {
+            Invoke(nameof(ResetJump), jumpCooldown);
+        }
     }
 
     public void SetMoveInput(Vector2 moveInput)

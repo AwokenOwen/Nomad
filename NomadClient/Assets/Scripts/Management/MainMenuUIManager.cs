@@ -37,7 +37,7 @@ public class MainMenuUIManager : MonoBehaviour
     #region Singleplayer Variables
     [Header("Singleplayer Variables")]
     [SerializeField]
-    private GameObject[] SingleplayerTopRow;
+    private GameObject newGameButton;
     [SerializeField]
     private GameObject[] SingleplayerBottomRow;
 
@@ -107,7 +107,7 @@ public class MainMenuUIManager : MonoBehaviour
         InstantiateWorldSaveObjects();
         menuState = MenuState.SingleplayerNonSelected;
         currentSelectedIndex = 0;
-        eventSystem.SetSelectedGameObject(SingleplayerTopRow[0]);
+        eventSystem.SetSelectedGameObject(newGameButton.gameObject);
     }
     public void OpenMainMenu()
     {
@@ -157,7 +157,10 @@ public class MainMenuUIManager : MonoBehaviour
 
     void WorldDeselect()
     {
-        WorldSelected("");
+        foreach (WorldSaveScript obj in worldSaveObjects)
+        {
+            obj.selectedImage.SetActive(false);
+        }
 
         openWorldButton.interactable = false;
         openWorldText.alpha = 87f/255f;
@@ -194,7 +197,12 @@ public class MainMenuUIManager : MonoBehaviour
     public void DeleteWorld()
     {
         FileManager.DeleteSave(selectedWorld);
+
         RefreshWorlds();
+
+        menuState = MenuState.SingleplayerNonSelected;
+        currentSelectedIndex = 0;
+        eventSystem.SetSelectedGameObject(newGameButton.gameObject);
     }
 
     #endregion
@@ -218,22 +226,17 @@ public class MainMenuUIManager : MonoBehaviour
                     currentSelectedIndex = 0;
                     WorldSelected(worldSaveObjects[0].worldTitle.text);
                     worldSaveObjects[0].selectedImage.SetActive(true);
-                    WorldDeselect();
                     break;
                 }
-                currentSelectedIndex -= Mathf.RoundToInt(input.x);
-                if (currentSelectedIndex < 0)
-                    currentSelectedIndex = SingleplayerTopRow.Length - 1;
-                currentSelectedIndex = currentSelectedIndex % SingleplayerTopRow.Length;
-                eventSystem.SetSelectedGameObject(SingleplayerTopRow[currentSelectedIndex]);
                 break;
             case MenuState.SingleplayerSelect:
                 currentSelectedIndex -= Mathf.RoundToInt(input.y);
                 if (currentSelectedIndex < 0)
                 {
                     menuState = MenuState.SingleplayerNonSelected;
-                    currentSelectedIndex = 0;
-                    eventSystem.SetSelectedGameObject(SingleplayerTopRow[0]);
+                    eventSystem.SetSelectedGameObject(newGameButton.gameObject);
+                    WorldDeselect();
+                    break;
                 }
                 currentSelectedIndex = currentSelectedIndex % worldSaveObjects.Count;
                 WorldSelected(worldSaveObjects[currentSelectedIndex].worldTitle.text);

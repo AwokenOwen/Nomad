@@ -12,9 +12,6 @@ public class WorldData
     PlayerData playerData;
 
     [SerializeField]
-    SettingsData settingsData;
-
-    [SerializeField]
     Vector3 spawnPoint;
 
     public WorldData(string name)
@@ -23,7 +20,6 @@ public class WorldData
         //imput world spawn point here
         spawnPoint = Vector3.zero;
         this.playerData = new PlayerData(spawnPoint);
-        this.settingsData = new SettingsData();
     }
 
     public void saveWorld(Vector3 playerPos)
@@ -36,16 +32,6 @@ public class WorldData
     {
         player = playerData;
         playerData.PlayerInventory.LoadItems();
-    }
-
-    public float getSens()
-    {
-        return settingsData.Sensitivity;
-    }
-
-    public void setSens(float sens)
-    {
-        settingsData.Sensitivity = sens;
     }
 
     public void AddItem(ItemData data)
