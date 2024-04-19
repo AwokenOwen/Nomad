@@ -48,13 +48,18 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
-        transform.position = GameManager.instance.currentWorldData.GetSpawn();
-
+        Invoke(nameof(StartUp), 0.1f);
+        
         rb = GetComponent<Rigidbody>();
 
         abilities = GameManager.instance.currentWorldData.GetAbilities();
 
         exitingSlope = false;
+    }
+
+    private void StartUp()
+    {
+        transform.position = GameManager.instance.currentWorldData.GetSpawn();
     }
 
     private void Update()
@@ -66,14 +71,7 @@ public class PlayerManager : MonoBehaviour
 
         if (jumping && grounded && canJump)
         {
-            if (moveInput.magnitude > 0)
-            {
-                bodyAnimator.Play("JumpWhileRunning");
-            }
-            else
-            {
-                bodyAnimator.Play("Jump_Up");
-            }
+            bodyAnimator.Play(moveInput.magnitude > 0 ? "JumpWhileRunning" : "Jump_Up");
             canJump = false;
 
             abilities.JumpData.OnHold();
