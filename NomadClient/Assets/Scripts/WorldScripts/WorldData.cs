@@ -18,7 +18,7 @@ public class WorldData
     {
         this.name = name;
         //imput world spawn point here
-        spawnPoint = Vector3.zero;
+        spawnPoint = new Vector3(2274f, 11f, 2721f);
         this.playerData = new PlayerData(spawnPoint);
     }
 
