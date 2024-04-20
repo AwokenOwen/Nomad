@@ -24,7 +24,7 @@ public class PlayerData
     {
         this.PlayerInventory = new InventoryData();
         this.PlayerStats = new StatsData();
-        this.Abilities = new AbilityData(new JumpData(BASE_STATS.JUMP_FORCE));
+        this.Abilities = new AbilityData(new JumpData());
 
         this.Position = Position;
     }

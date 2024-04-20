@@ -21,15 +21,17 @@ public class PlayerManager : MonoBehaviour
 
     [field: SerializeField] public float airMultiplier {  get; private set; }
 
+    public Vector3 groundedNormal {  get; private set; }
+
     AbilityData abilities;
-    [SerializeField] bool jumping, canJump;
+    [SerializeField] bool jumping;
 
     [SerializeField]
     float jumpCooldown;
 
     [field: SerializeField] public Animator bodyAnimator {  get; private set; }
 
-    public bool exitingSlope {  get; private set; }
+    public bool exitingSlope;
 
     public delegate void OpenPauseMenuAction(bool open);
     public static event OpenPauseMenuAction OpenPauseMenuEvent;
@@ -65,19 +67,11 @@ public class PlayerManager : MonoBehaviour
     private void Update()
     {
         RaycastHit hit;
-        grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, (playerHeight * 0.5f) + 0.2f, groundMask);
+        grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, (playerHeight * 0.5f) + 0.5f, groundMask);
+
+        groundedNormal = hit.normal;
 
         bodyAnimator.SetBool("Grounded", grounded);
-
-        if (jumping && grounded && canJump)
-        {
-            bodyAnimator.Play(moveInput.magnitude > 0 ? "JumpWhileRunning" : "Jump_Up");
-            canJump = false;
-
-            abilities.JumpData.OnHold();
-
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
     }
 
     private void FixedUpdate()
@@ -89,20 +83,14 @@ public class PlayerManager : MonoBehaviour
 
         bodyAnimator.SetFloat("xInput", Mathf.Lerp(bodyAnimator.GetFloat("xInput"), moveInput.x, 0.1f));
         bodyAnimator.SetFloat("yInput", Mathf.Lerp(bodyAnimator.GetFloat("yInput"), moveInput.y, 0.1f));
+
+        if (jumping)
+        {
+            abilities.JumpData.OnHold();
+        }
     }
 
-    private void ResetJump()
-    {
-        if (grounded)
-        {
-            canJump = true;
-            exitingSlope = false;
-        }
-        else
-        {
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
-    }
+
 
     public void SetMoveInput(Vector2 moveInput)
     {
