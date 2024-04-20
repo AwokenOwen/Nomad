@@ -16,11 +16,18 @@ public class JumpData: IJumps
 
             PlayerManager.instance.rb.velocity = new Vector3(PlayerManager.instance.rb.velocity.x, 0f, PlayerManager.instance.rb.velocity.z);
 
-            Vector3 force = PlayerManager.instance.groundedNormal;
+            if (Vector3.Angle(PlayerManager.instance.transform.up, PlayerManager.instance.groundedNormal) > 10f)
+            {
+                Vector3 force = PlayerManager.instance.groundedNormal;
 
-            force.y = 1f;
+                force.y = 1f;
 
-            PlayerManager.instance.rb.AddForce(force * GameManager.instance.currentWorldData.GetJumpForce(), ForceMode.Impulse);
+                PlayerManager.instance.rb.AddForce(force * GameManager.instance.currentWorldData.GetJumpForce(), ForceMode.Impulse);
+            }
+            else
+            {
+                PlayerManager.instance.rb.AddForce(PlayerManager.instance.transform.up * GameManager.instance.currentWorldData.GetJumpForce(), ForceMode.Impulse);
+            }
         }
     }
 

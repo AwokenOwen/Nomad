@@ -6,9 +6,12 @@ public class PlayerMotion : MonoBehaviour
 {
     Vector3 inputForward;
 
+    public bool onSlope;
 
     private void Update()
-    {   
+    {
+        onSlope = PlayerManager.instance.OnSlope();
+
         //Get Input
         Vector3 input = PlayerManager.instance.moveInput;
 
@@ -16,10 +19,7 @@ public class PlayerMotion : MonoBehaviour
 
         inputForward = new Vector3();
 
-        if (PlayerManager.instance.grounded)
-        {
-            inputForward = cameraForward * input.y + Vector3.Cross(cameraForward, Vector3.up) * -input.x;
-        }
+        inputForward = cameraForward * input.y + Vector3.Cross(cameraForward, Vector3.up) * -input.x;
 
         if (PlayerManager.instance.OnSlope() && !PlayerManager.instance.exitingSlope)
         {
@@ -89,7 +89,6 @@ public class PlayerMotion : MonoBehaviour
     {
         PlayerManager.instance.rb.AddForce(dir * GameManager.instance.currentWorldData.GetMoveSpeed() * 15f, ForceMode.Force);
 
-        if (Mathf.Abs(PlayerManager.instance.rb.velocity.y) > 0)
-            PlayerManager.instance.rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+        PlayerManager.instance.rb.AddForce(Vector3.down * 80f, ForceMode.Force);
     }
 }
