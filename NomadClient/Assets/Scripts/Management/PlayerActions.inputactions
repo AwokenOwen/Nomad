@@ -207,15 +207,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Escape",
-                    "type": "Button",
-                    "id": "734c7fc5-a30f-4d9b-9d00-f1a5ac96e1c3",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -364,17 +355,6 @@
                 },
                 {
                     "name": "",
-                    "id": "ad334733-0f35-4b17-8b79-0f817bddb50f",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Back",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "a98581b8-d17e-43ab-b1d7-f61c66f82c09",
                     "path": "<Gamepad>/buttonEast",
                     "interactions": "",
@@ -386,23 +366,12 @@
                 },
                 {
                     "name": "",
-                    "id": "7188db3e-7aa4-464e-bc8c-7f345f3e40e2",
+                    "id": "a29eb5c9-6ebf-4a62-8dfe-4f8f793a4b57",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Escape",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "df6b4c91-d5f6-4e28-bf4c-fecfc4eec40c",
-                    "path": "<Gamepad>/start",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Escape",
+                    "action": "Back",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

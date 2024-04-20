@@ -54,6 +54,7 @@ public class MainMenuUIManager : MonoBehaviour
     public TMP_Text deleteWorldText;
 
     string selectedWorld;
+    int worldListIndex;
 
     int currentSelectedIndex;
     #endregion
@@ -62,12 +63,14 @@ public class MainMenuUIManager : MonoBehaviour
     {
         GameManager.MenuNavigationEvent += Navigation;
         GameManager.MenuSubmitEvent += Submit;
+        GameManager.MenuBackEvent += Back;
     }
 
     private void OnDisable()
     {
         GameManager.MenuNavigationEvent -= Navigation;
         GameManager.MenuSubmitEvent -= Submit;
+        GameManager.MenuBackEvent -= Back;
     }
 
     private void Start()
@@ -162,10 +165,15 @@ public class MainMenuUIManager : MonoBehaviour
             obj.selectedImage.SetActive(false);
         }
 
+        BottomRowDeselect();
+    }
+
+    void BottomRowDeselect()
+    {
         openWorldButton.interactable = false;
-        openWorldText.alpha = 87f/255f;
+        openWorldText.alpha = 87f / 255f;
         deleteWorldButton.interactable = false;
-        deleteWorldText.alpha = 87f/255f;
+        deleteWorldText.alpha = 87f / 255f;
     }
 
     public void InstantiateWorldSaveObjects()
@@ -271,6 +279,8 @@ public class MainMenuUIManager : MonoBehaviour
                 deleteWorldButton.interactable = true;
                 deleteWorldText.alpha = 1f;
 
+                worldListIndex = currentSelectedIndex;
+
                 eventSystem.SetSelectedGameObject(SingleplayerBottomRow[0]);
                 currentSelectedIndex = 0;
                 menuState = MenuState.SingleplayerSelected;
@@ -280,6 +290,39 @@ public class MainMenuUIManager : MonoBehaviour
                 break;
             case MenuState.SingleplayerNewGame:
                 CreateNewWorld();
+                break;
+        }
+    }
+
+    void Back()
+    {
+        switch (menuState)
+        {
+            case MenuState.MainMenu:
+                //dont do shit
+                break;
+            case MenuState.SingleplayerNonSelected:
+                //open the main menu and switch states
+                OpenMainMenu();
+                currentSelectedIndex = 0;
+                eventSystem.SetSelectedGameObject(MainMenuButtons[0]);
+                menuState = MenuState.MainMenu;
+                break;
+            case MenuState.SingleplayerSelect:
+                //deslect switch states
+                WorldDeselect();
+                eventSystem.SetSelectedGameObject(newGameButton.gameObject);
+                menuState = MenuState.SingleplayerNonSelected;
+                break;
+            case MenuState.SingleplayerSelected:
+                //switch states and "deselect"
+                BottomRowDeselect();
+                currentSelectedIndex = worldListIndex;
+                menuState = MenuState.SingleplayerSelect;
+                break;
+            case MenuState.SingleplayerNewGame:
+                //switch states and open single player menu
+                OpenSingleplayerMenu();
                 break;
         }
     }

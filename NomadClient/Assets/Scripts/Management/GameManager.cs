@@ -29,6 +29,9 @@ public class GameManager : MonoBehaviour
     public delegate void MenuSubmitAction();
     public static event MenuSubmitAction MenuSubmitEvent;
 
+    public delegate void MenuBackAction();
+    public static event MenuBackAction MenuBackEvent;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -131,5 +134,11 @@ public class GameManager : MonoBehaviour
     public void MenuSubmit()
     {
         MenuSubmitEvent();
+    }
+
+
+    public void MenuBack()
+    {
+        MenuBackEvent();
     }
 }

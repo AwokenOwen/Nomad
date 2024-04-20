@@ -11,7 +11,7 @@ public enum InputMode
 
 public class InputManager : MonoBehaviour
 {
-    PlayerActions inputActions;
+    static PlayerActions inputActions;
 
     //Locomotion inputs
     InputAction movementAction;
@@ -47,7 +47,7 @@ public class InputManager : MonoBehaviour
         //Menu inputs
         menuNavigationAction = inputActions.Menu.Navigation;
         menuSubmitAction = inputActions.Menu.Select;
-        menuEscapeAction = inputActions.Menu.Escape;
+        menuEscapeAction = inputActions.Menu.Back;
 
         menuNavigationAction.performed += OnNavigation;
         menuSubmitAction.performed += OnSubmit;
@@ -80,13 +80,13 @@ public class InputManager : MonoBehaviour
         Disable();
     }
 
-    private void Disable()
+    private static void Disable()
     {
         inputActions.Locomotion.Disable();
         inputActions.Menu.Disable();
     }
 
-    public void SwitchInputMode(InputMode newMode)
+    public static void SwitchInputMode(InputMode newMode)
     {
         Disable();
         switch (newMode)
@@ -123,8 +123,7 @@ public class InputManager : MonoBehaviour
 
     private void OnEscapeMenu(InputAction.CallbackContext context)
     {
-        SwitchInputMode(InputMode.Game);
-        PlayerManager.instance.ClosePauseMenu();
+        GameManager.instance.MenuBack();
     }
     
     private void OnNavigation(InputAction.CallbackContext context)

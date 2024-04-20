@@ -57,8 +57,8 @@ public class PlayerMotion : MonoBehaviour
         else
         {
             //if capsule cast toward direction add force in direction of project on plane with normal with y = 0f; 
-            Vector3 point1 = transform.position + (Vector3.up * (1 / 2f));
-            Vector3 point2 = transform.position + (Vector3.down * (1 / 2f));
+            Vector3 point1 = transform.position + (Vector3.up * (PlayerManager.instance.playerHeight / 2f));
+            Vector3 point2 = transform.position + (Vector3.down * (PlayerManager.instance.playerHeight / 2f));
 
             RaycastHit hit;
             if (Physics.CapsuleCast(point1, point2, 0.25f, inputForward, out hit, 0.3f, PlayerManager.instance.groundMask))

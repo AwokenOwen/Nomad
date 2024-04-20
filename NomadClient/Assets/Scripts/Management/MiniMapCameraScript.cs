@@ -24,7 +24,7 @@ public class MiniMapCameraScript : MonoBehaviour
 
         dir.Normalize();
 
-        northImage.rectTransform.position = MiniMap.rectTransform.position + (dir * radius);
+        northImage.rectTransform.localPosition = (dir * radius);
 
 
     }

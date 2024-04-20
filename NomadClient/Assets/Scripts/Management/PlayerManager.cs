@@ -67,7 +67,7 @@ public class PlayerManager : MonoBehaviour
     private void Update()
     {
         RaycastHit hit;
-        grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, 1.5f, groundMask);
+        grounded = Physics.SphereCast(transform.position, 0.3f, Vector3.down, out hit, (playerHeight / 2f) + 0.5f, groundMask);
 
         groundedNormal = hit.normal;
 
@@ -132,7 +132,7 @@ public class PlayerManager : MonoBehaviour
 
     public bool OnSlope(out RaycastHit slopeHit)
     {
-        if (Physics.SphereCast(transform.position, 0.3f, Vector3.down, out slopeHit, 1.5f, groundMask))
+        if (Physics.SphereCast(transform.position, 0.3f, Vector3.down, out slopeHit, (playerHeight / 2f) + 0.5f, groundMask))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopeAngle && angle != 0;
@@ -143,7 +143,7 @@ public class PlayerManager : MonoBehaviour
     public bool OnSlope()
     {
         RaycastHit slopeHit;
-        if (Physics.SphereCast(transform.position, 0.3f, Vector3.down, out slopeHit, 1.5f, groundMask))
+        if (Physics.SphereCast(transform.position, 0.3f, Vector3.down, out slopeHit, (playerHeight / 2f) + 0.5f, groundMask))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopeAngle && angle != 0;
@@ -154,10 +154,5 @@ public class PlayerManager : MonoBehaviour
     public void OpenPauseMenu()
     {
         OpenPauseMenuEvent(true);
-    }
-
-    public void ClosePauseMenu()
-    {
-        OpenPauseMenuEvent(false);
     }
 }
