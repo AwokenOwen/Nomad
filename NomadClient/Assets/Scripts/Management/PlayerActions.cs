@@ -62,6 +62,15 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OpenGrimore"",
+                    ""type"": ""Button"",
+                    ""id"": ""6bd637b6-4e6b-45f3-9f8f-cc8d89b7035c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -194,6 +203,28 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Escape"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d1d55166-c351-4f17-b0c8-c8f643380c7e"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenGrimore"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ae229edb-28a2-45e8-b24a-77e69683a2a2"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenGrimore"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -408,6 +439,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         m_Locomotion_Camera = m_Locomotion.FindAction("Camera", throwIfNotFound: true);
         m_Locomotion_Jump = m_Locomotion.FindAction("Jump", throwIfNotFound: true);
         m_Locomotion_Escape = m_Locomotion.FindAction("Escape", throwIfNotFound: true);
+        m_Locomotion_OpenGrimore = m_Locomotion.FindAction("OpenGrimore", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_Navigation = m_Menu.FindAction("Navigation", throwIfNotFound: true);
@@ -478,6 +510,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Locomotion_Camera;
     private readonly InputAction m_Locomotion_Jump;
     private readonly InputAction m_Locomotion_Escape;
+    private readonly InputAction m_Locomotion_OpenGrimore;
     public struct LocomotionActions
     {
         private @PlayerActions m_Wrapper;
@@ -486,6 +519,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         public InputAction @Camera => m_Wrapper.m_Locomotion_Camera;
         public InputAction @Jump => m_Wrapper.m_Locomotion_Jump;
         public InputAction @Escape => m_Wrapper.m_Locomotion_Escape;
+        public InputAction @OpenGrimore => m_Wrapper.m_Locomotion_OpenGrimore;
         public InputActionMap Get() { return m_Wrapper.m_Locomotion; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -507,6 +541,9 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @Escape.started += instance.OnEscape;
             @Escape.performed += instance.OnEscape;
             @Escape.canceled += instance.OnEscape;
+            @OpenGrimore.started += instance.OnOpenGrimore;
+            @OpenGrimore.performed += instance.OnOpenGrimore;
+            @OpenGrimore.canceled += instance.OnOpenGrimore;
         }
 
         private void UnregisterCallbacks(ILocomotionActions instance)
@@ -523,6 +560,9 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @Escape.started -= instance.OnEscape;
             @Escape.performed -= instance.OnEscape;
             @Escape.canceled -= instance.OnEscape;
+            @OpenGrimore.started -= instance.OnOpenGrimore;
+            @OpenGrimore.performed -= instance.OnOpenGrimore;
+            @OpenGrimore.canceled -= instance.OnOpenGrimore;
         }
 
         public void RemoveCallbacks(ILocomotionActions instance)
@@ -608,6 +648,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         void OnCamera(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnEscape(InputAction.CallbackContext context);
+        void OnOpenGrimore(InputAction.CallbackContext context);
     }
     public interface IMenuActions
     {
