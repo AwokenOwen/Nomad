@@ -5,10 +5,10 @@ using UnityEngine;
 [System.Serializable]
 public class AbilityData
 {
-    public JumpData JumpData;
+    
 
-    public AbilityData(JumpData JumpData)
+    public AbilityData()
     {
-        this.JumpData = JumpData;
+        
     }
 }

@@ -17,26 +17,26 @@ public class WorldData
     public WorldData(string name)
     {
         this.name = name;
-        //imput world spawn point here
+        //input world spawn point here
         spawnPoint = new Vector3(2274f, 11f, 2721f);
         this.playerData = new PlayerData(spawnPoint);
     }
 
     public void saveWorld(Vector3 playerPos)
     {
-        playerData.PlayerInventory.SaveItems();
+        playerData.Grimore.PlayerInventory.SaveItems();
         playerData.Position = playerPos;
     }
 
     public void loadWorld(out PlayerData player)
     {
         player = playerData;
-        playerData.PlayerInventory.LoadItems();
+        playerData.Grimore.PlayerInventory.LoadItems();
     }
 
     public void AddItem(ItemData data)
     {
-        playerData.PlayerInventory.AddItem(data, 1);
+        playerData.Grimore.PlayerInventory.AddItem(data, 1);
     }
 
     public float GetMoveSpeed()
@@ -51,9 +51,9 @@ public class WorldData
         return BASE_STATS.JUMP_FORCE;
     }
 
-    public AbilityData GetAbilities()
+    public Grimore GetGrimore()
     {
-        return playerData.Abilities;
+        return playerData.Grimore;
     }
 
     public Vector3 GetSpawn()

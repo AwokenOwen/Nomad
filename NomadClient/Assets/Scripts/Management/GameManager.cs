@@ -26,11 +26,17 @@ public class GameManager : MonoBehaviour
     public delegate void MenuNavigationAction(Vector2 input);
     public static event MenuNavigationAction MenuNavigationEvent;
 
+    public delegate void MenuTavNavAction(float value);
+    public static event MenuTavNavAction MenuTabNavEvent;
+
     public delegate void MenuSubmitAction();
     public static event MenuSubmitAction MenuSubmitEvent;
 
     public delegate void MenuBackAction();
     public static event MenuBackAction MenuBackEvent;
+
+    public delegate void MenuCloseAction();
+    public static event MenuCloseAction MenuCloseEvent;
 
     private void Awake()
     {
@@ -71,6 +77,8 @@ public class GameManager : MonoBehaviour
         WorldData data = new WorldData(name);
 
         data.AddItem(ITEMS.SIMPLE_SWORD);
+
+        data.saveWorld(data.GetSpawn());
 
         FileManager.saveWorld(data);
         OpenSingleplayerWorld(name);
@@ -131,6 +139,11 @@ public class GameManager : MonoBehaviour
         MenuNavigationEvent(input);
     }
 
+    public void MenuTabNav(float value)
+    {
+        MenuTabNavEvent(value);
+    }
+
     public void MenuSubmit()
     {
         MenuSubmitEvent();
@@ -140,5 +153,10 @@ public class GameManager : MonoBehaviour
     public void MenuBack()
     {
         MenuBackEvent();
+    }
+
+    public void MenuClose()
+    {
+        MenuCloseEvent();
     }
 }

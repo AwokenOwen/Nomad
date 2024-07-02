@@ -18,11 +18,14 @@ public class InputManager : MonoBehaviour
     InputAction cameraAction;
     InputAction jumpAction;
     InputAction escapeAction;
+    InputAction openGrimoreAction;
 
     //Menu inputs
     InputAction menuNavigationAction;
     InputAction menuSubmitAction;
     InputAction menuEscapeAction;
+    InputAction menuCloseAction;
+    InputAction menuTabNavAction;
 
     private void Awake()
     {
@@ -35,6 +38,7 @@ public class InputManager : MonoBehaviour
         cameraAction = inputActions.Locomotion.Camera;
         jumpAction = inputActions.Locomotion.Jump;
         escapeAction = inputActions.Locomotion.Escape;
+        openGrimoreAction = inputActions.Locomotion.OpenGrimore;
 
         movementAction.performed += OnMove;
         movementAction.canceled += OnMove;
@@ -43,15 +47,21 @@ public class InputManager : MonoBehaviour
         jumpAction.performed += OnJump;
         jumpAction.canceled += OnJump;
         escapeAction.performed += OnEscapeLocomotion;
+        openGrimoreAction.performed += OnOpenGrimore;
+
 
         //Menu inputs
         menuNavigationAction = inputActions.Menu.Navigation;
         menuSubmitAction = inputActions.Menu.Select;
         menuEscapeAction = inputActions.Menu.Back;
+        menuCloseAction = inputActions.Menu.CloseMenu;
+        menuTabNavAction = inputActions.Menu.TabNav;
 
         menuNavigationAction.performed += OnNavigation;
         menuSubmitAction.performed += OnSubmit;
         menuEscapeAction.performed += OnEscapeMenu;
+        menuCloseAction.performed += OnCloseMenu;
+        menuTabNavAction.performed += OnTabNav;
     }
 
     private void OnEnable()
@@ -71,11 +81,14 @@ public class InputManager : MonoBehaviour
         jumpAction.performed -= OnJump;
         jumpAction.canceled -= OnJump;
         escapeAction.performed -= OnEscapeLocomotion;
+        openGrimoreAction.performed -= OnOpenGrimore;
 
         //Menu inputs
         menuNavigationAction.performed -= OnNavigation;
         menuSubmitAction.performed -= OnSubmit;
         menuEscapeAction.performed -= OnEscapeMenu;
+        menuCloseAction.performed -= OnCloseMenu;
+        menuTabNavAction.performed-= OnTabNav;
 
         Disable();
     }
@@ -121,6 +134,12 @@ public class InputManager : MonoBehaviour
         PlayerManager.instance.OpenPauseMenu();
     }
 
+    private void OnOpenGrimore(InputAction.CallbackContext context)
+    {
+        SwitchInputMode(InputMode.Menu);
+        PlayerManager.instance.OpenGrimore();
+    }
+
     private void OnEscapeMenu(InputAction.CallbackContext context)
     {
         GameManager.instance.MenuBack();
@@ -136,5 +155,17 @@ public class InputManager : MonoBehaviour
     private void OnSubmit(InputAction.CallbackContext context)
     {
         GameManager.instance.MenuSubmit();
+    }
+
+    private void OnCloseMenu(InputAction.CallbackContext context)
+    {
+        GameManager.instance.MenuClose();
+    }
+
+    private void OnTabNav(InputAction.CallbackContext context)
+    {
+        float value = context.ReadValue<float>();
+        if (value != 0f)
+            GameManager.instance.MenuTabNav(value);
     }
 }

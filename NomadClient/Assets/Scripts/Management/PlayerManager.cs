@@ -23,7 +23,7 @@ public class PlayerManager : MonoBehaviour
 
     public Vector3 groundedNormal {  get; private set; }
 
-    AbilityData abilities;
+    Grimore grimore;
     [SerializeField] bool jumping;
 
     [SerializeField]
@@ -35,6 +35,9 @@ public class PlayerManager : MonoBehaviour
 
     public delegate void OpenPauseMenuAction(bool open);
     public static event OpenPauseMenuAction OpenPauseMenuEvent;
+
+    public delegate void OpenGrimoreAction();
+    public static event OpenGrimoreAction OpenGrimoreEvent;
 
     private void Awake()
     {
@@ -54,7 +57,7 @@ public class PlayerManager : MonoBehaviour
         
         rb = GetComponent<Rigidbody>();
 
-        abilities = GameManager.instance.currentWorldData.GetAbilities();
+        grimore = GameManager.instance.currentWorldData.GetGrimore();
 
         exitingSlope = false;
     }
@@ -86,7 +89,7 @@ public class PlayerManager : MonoBehaviour
 
         if (jumping)
         {
-            abilities.JumpData.OnHold();
+            grimore.JumpData.OnHold();
         }
     }
 
@@ -112,11 +115,11 @@ public class PlayerManager : MonoBehaviour
         jumping = performed;
         if (performed)
         {
-            abilities.JumpData.OnPress();
+            grimore.JumpData.OnPress();
         }
         else
         {
-            abilities.JumpData.OnRelease();
+            grimore.JumpData.OnRelease();
         }
 
         Invoke(nameof(ResetJump), jumpCooldown);
@@ -154,5 +157,10 @@ public class PlayerManager : MonoBehaviour
     public void OpenPauseMenu()
     {
         OpenPauseMenuEvent(true);
+    }
+
+    public void OpenGrimore()
+    {
+        OpenGrimoreEvent();
     }
 }

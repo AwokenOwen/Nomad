@@ -260,6 +260,24 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CloseMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""31cffab0-74d9-4c11-9b38-c4bc57c2b675"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TabNav"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""151a100d-76dc-44c6-a6d5-f1c7cc97512f"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -427,6 +445,94 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""action"": ""Back"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""051f062a-04f4-4390-b73e-c03173b9c385"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6068b839-c7c4-44bb-a81e-dd09e5e9600f"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Q/E"",
+                    ""id"": ""e35d2229-da6a-4c80-8e65-f0aee869d6d4"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabNav"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""8ebe50c7-b3f1-462b-b402-b544b16a78c4"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabNav"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""0512e008-460b-47e8-816d-7400d0072780"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabNav"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Bumber"",
+                    ""id"": ""77f22b40-51b1-4f11-93d4-e7e2d46ceeec"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabNav"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""266636a5-050c-433d-b6d9-2b0e4455fb1f"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabNav"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""34279f77-95e7-4bc7-a618-4b3f90e0122b"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TabNav"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -445,6 +551,8 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         m_Menu_Navigation = m_Menu.FindAction("Navigation", throwIfNotFound: true);
         m_Menu_Select = m_Menu.FindAction("Select", throwIfNotFound: true);
         m_Menu_Back = m_Menu.FindAction("Back", throwIfNotFound: true);
+        m_Menu_CloseMenu = m_Menu.FindAction("CloseMenu", throwIfNotFound: true);
+        m_Menu_TabNav = m_Menu.FindAction("TabNav", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -587,6 +695,8 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Menu_Navigation;
     private readonly InputAction m_Menu_Select;
     private readonly InputAction m_Menu_Back;
+    private readonly InputAction m_Menu_CloseMenu;
+    private readonly InputAction m_Menu_TabNav;
     public struct MenuActions
     {
         private @PlayerActions m_Wrapper;
@@ -594,6 +704,8 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         public InputAction @Navigation => m_Wrapper.m_Menu_Navigation;
         public InputAction @Select => m_Wrapper.m_Menu_Select;
         public InputAction @Back => m_Wrapper.m_Menu_Back;
+        public InputAction @CloseMenu => m_Wrapper.m_Menu_CloseMenu;
+        public InputAction @TabNav => m_Wrapper.m_Menu_TabNav;
         public InputActionMap Get() { return m_Wrapper.m_Menu; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -612,6 +724,12 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @Back.started += instance.OnBack;
             @Back.performed += instance.OnBack;
             @Back.canceled += instance.OnBack;
+            @CloseMenu.started += instance.OnCloseMenu;
+            @CloseMenu.performed += instance.OnCloseMenu;
+            @CloseMenu.canceled += instance.OnCloseMenu;
+            @TabNav.started += instance.OnTabNav;
+            @TabNav.performed += instance.OnTabNav;
+            @TabNav.canceled += instance.OnTabNav;
         }
 
         private void UnregisterCallbacks(IMenuActions instance)
@@ -625,6 +743,12 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @Back.started -= instance.OnBack;
             @Back.performed -= instance.OnBack;
             @Back.canceled -= instance.OnBack;
+            @CloseMenu.started -= instance.OnCloseMenu;
+            @CloseMenu.performed -= instance.OnCloseMenu;
+            @CloseMenu.canceled -= instance.OnCloseMenu;
+            @TabNav.started -= instance.OnTabNav;
+            @TabNav.performed -= instance.OnTabNav;
+            @TabNav.canceled -= instance.OnTabNav;
         }
 
         public void RemoveCallbacks(IMenuActions instance)
@@ -655,5 +779,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         void OnNavigation(InputAction.CallbackContext context);
         void OnSelect(InputAction.CallbackContext context);
         void OnBack(InputAction.CallbackContext context);
+        void OnCloseMenu(InputAction.CallbackContext context);
+        void OnTabNav(InputAction.CallbackContext context);
     }
 }

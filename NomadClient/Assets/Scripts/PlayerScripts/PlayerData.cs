@@ -14,18 +14,13 @@ public enum Stats
 [System.Serializable]
 public class PlayerData
 {
-    public InventoryData PlayerInventory;
-    public StatsData PlayerStats;
-    public AbilityData Abilities;
-
+    public string Name;
+    public Grimore Grimore;
     public Vector3 Position;
 
     public PlayerData(Vector3 Position)
     {
-        this.PlayerInventory = new InventoryData();
-        this.PlayerStats = new StatsData();
-        this.Abilities = new AbilityData(new JumpData());
-
+        this.Grimore = new Grimore();
         this.Position = Position;
     }
 }

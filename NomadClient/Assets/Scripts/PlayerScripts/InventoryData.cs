@@ -5,88 +5,121 @@ using UnityEngine;
 [System.Serializable]
 public class InventoryData
 {
-    public Dictionary<ItemData, int> items;
-    public List<ItemDictEntry> savedItems;
+    public Dictionary<ItemData, int> materials;
+    public List<MaterialDictEntry> savedMaterials;
+    public List<WeaponData> weapons;
+
+
     public float totalWeight;
 
     public InventoryData() 
     {
-        items = new Dictionary<ItemData, int>();
+        materials = new Dictionary<ItemData, int>();
         totalWeight = 0f;
     }
 
     public void SaveItems()
     {
-        savedItems = new List<ItemDictEntry>();
+        savedMaterials = new List<MaterialDictEntry>();
 
-        foreach (var item in items)
+        foreach (var item in materials)
         {
-            savedItems.Add(new ItemDictEntry(item.Key, item.Value));
+            savedMaterials.Add(new MaterialDictEntry(item.Key, item.Value));
         }
     }
 
     public void LoadItems()
     {
-        items = new Dictionary<ItemData, int>();
+        materials = new Dictionary<ItemData, int>();
 
-        foreach (var item in savedItems)
+        foreach (var item in savedMaterials)
         {
-            items.Add(ITEMS.GetItemFromName(item.data.name), item.count);
+            materials.Add(ITEMS.GetItemFromName(item.data.name), item.count);
         }
     }
 
     public void AddItem(ItemData data, int count)
     {
-        if (items.ContainsKey(data))
+        switch (data.type)
         {
-            items[data] += count;
-        }
-        else
-        {
-            items.Add(data, count);
+            case ItemType.Weapon:
+                weapons.Add((WeaponData)data);
+                break;
+            case ItemType.Armor:
+                break;
+            case ItemType.Material:
+                if (materials.ContainsKey(data))
+                {
+                    materials[data] += count;
+                }
+                else
+                {
+                    materials.Add(data, count);
+                }
+                break;
         }
         calculateTotalWeight();
     }
 
     public void RemoveItem(ItemData data, int count)
     {
-        if (items.ContainsKey(data))
+        switch (data.type)
         {
-            if (items[data] >= count)
-            {
-                items[data] -= count;
-                if (items[data] == 0)
+            case ItemType.Weapon:
+                if (weapons.Contains((WeaponData)data))
                 {
-                    items.Remove(data);
+                    weapons.Remove((WeaponData)data);
+                    calculateTotalWeight();
                 }
-                calculateTotalWeight();
-            }
+                break;
+            case ItemType.Armor:
+                break;
+            case ItemType.Material:
+                if (materials.ContainsKey(data))
+                {
+                    if (materials[data] >= count)
+                    {
+                        materials[data] -= count;
+                        if (materials[data] == 0)
+                        {
+                            materials.Remove(data);
+                        }
+                        calculateTotalWeight();
+                    }
+                }
+                break;
+            default: break;
         }
     }
 
     public void ClearAllItems()
     {
-        items.Clear();
+        materials.Clear();
         totalWeight = 0f;
     }
 
     void calculateTotalWeight()
     {
         totalWeight = 0f;
-        foreach (var key in items.Keys) 
+        
+        foreach (var key in materials.Keys) 
         {
-            totalWeight += key.weight * items[key];
+            totalWeight += key.weight * materials[key];
+        }
+        foreach (WeaponData weapon in weapons)
+        {
+            totalWeight += weapon.weight;
         }
     }
 }
 
 [System.Serializable]
-public class ItemDictEntry
+public class MaterialDictEntry
 {
     public ItemData data;
     public int count;
 
-    public ItemDictEntry(ItemData data, int count)
+    public MaterialDictEntry(ItemData data, int count)
     {
         this.data = data;
         this.count = count;
