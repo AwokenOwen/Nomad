@@ -55,6 +55,8 @@ public class GameManager : MonoBehaviour
     {
         currentGameState = GameStates.MainMenu;
         settingsData = FileManager.getSettings();
+
+        CreateNewSingleplayerWorld("apple");
     }
 
     private void Update()

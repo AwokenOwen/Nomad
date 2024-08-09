@@ -15,6 +15,8 @@ public class InventoryData
     public InventoryData() 
     {
         materials = new Dictionary<ItemData, int>();
+        savedMaterials = new List<MaterialDictEntry>();
+        weapons = new List<WeaponData>();
         totalWeight = 0f;
     }
 
